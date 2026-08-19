@@ -1,0 +1,10 @@
+# Meeting: Product metrics review
+Date: 2026-07-28
+Attendees: Maya Hassan, Tarek Ibrahim, Omar Nassar
+
+## Notes / fragments
+- Analytics adoption metric is undercounting CSV exports.
+- Omar: trace event emission and report where counts diverge — July 29.
+- Maya: confirm the metric definition against Product's dashboard spec — July 29.
+- Tarek: do not use the metric for a pricing decision until Finance reviews the definition.
+- Open: whether to backfill historical counts. No decision.

@@ -1,0 +1,9 @@
+# Meeting: SSO customer rollout review
+Date: 2026-07-24
+Attendees: Maya Hassan, Rami George, Hana Mostafa, Omar Nassar
+
+Maya: The next customer cohort is planned for August 3, but nobody enables it until Security signs off.
+Omar: I will make the audit-event test environment available today, July 24.
+Rami: After that, I will check role-change audit events on the new SSO login path on Monday, July 27.
+Rami: If the test is clean, I will send the SSO security review result Monday morning, July 27.
+Hana: I drafted the customer onboarding note, but I will hold customer-facing rollout messaging until security approval. There is no date for that gate.

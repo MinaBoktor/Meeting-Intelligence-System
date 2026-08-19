@@ -1,0 +1,9 @@
+# Meeting: Analytics filter design critique
+Date: 2026-06-13
+Attendees: Lina Farouk, Nour El-Sayed, Maya Hassan, Omar Nassar
+
+## Transcript
+Lina: The reset control disappears when the filter row wraps. I can revise the prototype today, June 13.
+Nour: If Lina lands the prototype, I'll move the reset control in the frontend. Let's target June 15 for the implementation.
+Maya: Product-wise, keep the behavior within the current filter scope. No new filter types.
+Omar: I'll check whether the current API already exposes everything the frontend needs. If not, we'll open a follow-up. No deadline committed.

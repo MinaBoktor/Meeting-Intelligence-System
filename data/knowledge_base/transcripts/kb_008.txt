@@ -1,0 +1,11 @@
+# Meeting: Finance invoice reconciliation
+Date: 2026-07-05
+Attendees: Dina Khalil, Omar Nassar, Tarek Ibrahim, Maya Hassan
+
+## Transcript
+Dina: Seven June invoices don't line up with provider references. I'll collect the provider-side references by July 6.
+Omar: Then I can compare Northstar's calculation logs against those references. Let's say July 7.
+Tarek: After that I will classify the mismatch as display-only or accounting-related. I don't have a date for that yet.
+Maya: If it's accounting-related, stop the pilot expansion. If it's display-only, we can keep investigating without blocking.
+[pause]
+Tarek: No, correction: Finance approval is needed before any customer rollout either way.

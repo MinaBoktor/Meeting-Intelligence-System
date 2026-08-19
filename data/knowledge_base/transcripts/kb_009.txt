@@ -1,0 +1,9 @@
+# Meeting: Search terminology review
+Date: 2026-07-09
+Attendees: Maya Hassan, Lina Farouk, Omar Nassar
+
+## Transcript
+Maya: We are standardizing on "Search documents" and "Search tasks". I'll confirm the terminology list today.
+Lina: Great. Once that's confirmed, I'll update the empty state and filter labels. I'll target July 11.
+Omar: I'll check the backend terminology for any schema changes. That's follow-up work; no date yet.
+Maya: And keep cross-workspace search out. That's not a wording change; it's out of scope.

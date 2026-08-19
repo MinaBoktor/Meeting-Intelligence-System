@@ -1,0 +1,11 @@
+# Meeting: Search launch readiness
+Date: 2026-08-10
+Attendees: Maya Hassan, Omar Nassar, Karim Samir, Lina Farouk
+
+Maya: Search stays workspace-only. Cross-workspace search is not part of this release.
+Omar: Indexing is done. Relevance tuning is the last engineering item. I'll complete it after the relevance regression results; no exact date.
+Karim: I need the final approved test dataset from Product before I can run relevance regression. Maya, can you send it Tuesday morning, August 11?
+Maya: Yes, I will provide the approved search test dataset on August 11.
+Karim: Then I'll run relevance regression tests; no exact completion date was committed.
+Lina: Search empty-state copy is ready, but I will adjust it after the final terminology review. No date yet.
+[transcription note: one speaker boundary was uncertain; the final assignments were restated clearly.]

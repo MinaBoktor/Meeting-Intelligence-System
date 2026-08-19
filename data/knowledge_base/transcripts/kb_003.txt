@@ -1,0 +1,9 @@
+# Meeting: Export permission QA triage
+Date: 2026-06-16
+Attendees: Omar Nassar, Karim Samir, Maya Hassan
+
+## Transcript
+[09:12] Omar: The middleware is rejecting some viewers incorrectly. I will inspect the authorization path before lunch.
+[09:47] Karim: After that fix, I will rerun viewer-permission cases 1, 2, and 3. Target is June 17.
+[10:04] Maya: Expected behavior is simple: viewers may export only when their workspace role permits it. I'll document that expectation today.
+[10:31] Omar: If the middleware change affects other exports, flag it instead of expanding scope.

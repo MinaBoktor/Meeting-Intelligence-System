@@ -1,0 +1,10 @@
+# Meeting: Mobile release planning
+Date: 2026-06-28
+Attendees: Nour El-Sayed, Karim Samir, Maya Hassan
+
+## Transcript
+Nour: Notification preferences screen is mostly done. I will finish the quiet-hours UI by June 29.
+Karim: I heard June 29. After that build is available, I need a mobile regression build. I can start testing June 30.
+Maya: The release is only for task-assignment notifications. Do not add comments or mention notifications.
+Nour: Backend should use device-local time for quiet hours. If the current endpoint assumes server time, we need to fix that before QA.
+[ASR note: one speaker name was repeated incorrectly in the original recording; corrected here only in the transcript header.]

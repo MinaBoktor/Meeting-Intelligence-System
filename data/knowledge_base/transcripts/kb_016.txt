@@ -1,0 +1,9 @@
+# Meeting: Admin roles UX review
+Date: 2026-08-02
+Attendees: Lina Farouk, Nour El-Sayed, Rami George, Maya Hassan
+
+## Transcript
+Lina: I will update the role-edit modal copy and clarify the difference between member and admin roles by August 3.
+Nour: I'll implement the copy after Lina's spec is merged. No date yet.
+Rami: Security wants the audit event for every role change. I'll review the event payload after the frontend branch is ready.
+Maya: Keep this within existing roles. We are not introducing a new "super admin" role.

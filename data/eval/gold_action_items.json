@@ -1,0 +1,408 @@
+[
+  {
+    "id": "eval_001",
+    "meeting_date": "2026-07-20",
+    "title": "Analytics export release check",
+    "gold_action_items": [
+      {
+        "task": "Run workspace-permission tests for the analytics CSV export",
+        "owner": "Karim Samir",
+        "due_iso": "2026-07-22",
+        "priority": "High",
+        "dependencies": [
+          "export endpoint implementation"
+        ],
+        "confidence": 1.0
+      },
+      {
+        "task": "Review and finalize analytics export empty-state wording",
+        "owner": "Lina Farouk",
+        "due_iso": "2026-07-22",
+        "priority": "Medium",
+        "dependencies": [],
+        "confidence": 1.0
+      },
+      {
+        "task": "Complete the final access-control check on the analytics export endpoint",
+        "owner": "Omar Nassar",
+        "due_iso": "2026-07-23",
+        "priority": "High",
+        "dependencies": [
+          "workspace-permission test results"
+        ],
+        "confidence": 0.98
+      }
+    ]
+  },
+  {
+    "id": "eval_002",
+    "meeting_date": "2026-07-22",
+    "title": "Mobile task notifications standup",
+    "gold_action_items": [
+      {
+        "task": "Provide the mobile notification settings copy to Nour El-Sayed",
+        "owner": "Maya Hassan",
+        "due_iso": "2026-07-23",
+        "priority": "Medium",
+        "dependencies": [],
+        "confidence": 1.0
+      },
+      {
+        "task": "Implement quiet-hours preference lookup using the user's device-local time",
+        "owner": "Youssef Adel",
+        "due_iso": "2026-07-22",
+        "priority": "High",
+        "dependencies": [
+          "notification preference behavior"
+        ],
+        "confidence": 0.98
+      },
+      {
+        "task": "Provide a mobile test build for notification testing",
+        "owner": "Nour El-Sayed",
+        "due_iso": "2026-07-23",
+        "priority": "High",
+        "dependencies": [
+          "notification settings UI"
+        ],
+        "confidence": 1.0
+      },
+      {
+        "task": "Test mobile task-assignment notifications, including quiet hours",
+        "owner": "Karim Samir",
+        "due_iso": "2026-07-24",
+        "priority": "High",
+        "dependencies": [
+          "mobile test build"
+        ],
+        "confidence": 1.0
+      }
+    ]
+  },
+  {
+    "id": "eval_003",
+    "meeting_date": "2026-07-24",
+    "title": "SSO customer rollout review",
+    "gold_action_items": [
+      {
+        "task": "Make the audit-event test environment available for the SSO review",
+        "owner": "Omar Nassar",
+        "due_iso": "2026-07-24",
+        "priority": "High",
+        "dependencies": [],
+        "confidence": 1.0
+      },
+      {
+        "task": "Check role-change audit events on the new SSO login path",
+        "owner": "Rami George",
+        "due_iso": "2026-07-27",
+        "priority": "High",
+        "dependencies": [
+          "audit-event test environment"
+        ],
+        "confidence": 1.0
+      },
+      {
+        "task": "Send the SSO security review result",
+        "owner": "Rami George",
+        "due_iso": "2026-07-27",
+        "priority": "High",
+        "dependencies": [
+          "role-change audit test"
+        ],
+        "confidence": 1.0
+      },
+      {
+        "task": "Hold customer-facing rollout messaging until security approval",
+        "owner": "Hana Mostafa",
+        "due_iso": null,
+        "priority": "High",
+        "dependencies": [
+          "SSO security approval"
+        ],
+        "confidence": 0.94
+      }
+    ]
+  },
+  {
+    "id": "eval_004",
+    "meeting_date": "2026-07-27",
+    "title": "Design system accessibility pass",
+    "gold_action_items": [
+      {
+        "task": "Add keyboard-navigation acceptance notes to the shared component specification",
+        "owner": "Lina Farouk",
+        "due_iso": "2026-07-28",
+        "priority": "Medium",
+        "dependencies": [],
+        "confidence": 1.0
+      },
+      {
+        "task": "Verify modal escape behavior and tab order",
+        "owner": "Karim Samir",
+        "due_iso": "2026-07-29",
+        "priority": "High",
+        "dependencies": [
+          "modal focus implementation"
+        ],
+        "confidence": 1.0
+      },
+      {
+        "task": "Add accessibility keyboard cases to the release checklist",
+        "owner": "Karim Samir",
+        "due_iso": "2026-07-29",
+        "priority": "Medium",
+        "dependencies": [
+          "Lina's acceptance notes"
+        ],
+        "confidence": 0.96
+      }
+    ]
+  },
+  {
+    "id": "eval_005",
+    "meeting_date": "2026-07-29",
+    "title": "Pricing experiment approval",
+    "gold_action_items": [
+      {
+        "task": "Update churn sensitivity assumptions in the pricing experiment model",
+        "owner": "Tarek Ibrahim",
+        "due_iso": "2026-07-30",
+        "priority": "High",
+        "dependencies": [],
+        "confidence": 1.0
+      },
+      {
+        "task": "Define success metrics for the pricing experiment",
+        "owner": "Maya Hassan",
+        "due_iso": null,
+        "priority": "Medium",
+        "dependencies": [
+          "experiment assumptions"
+        ],
+        "confidence": 0.9
+      },
+      {
+        "task": "Review the revised pricing experiment assumptions",
+        "owner": "Tarek Ibrahim",
+        "due_iso": "2026-07-30",
+        "priority": "High",
+        "dependencies": [
+          "updated churn sensitivity"
+        ],
+        "confidence": 0.98
+      },
+      {
+        "task": "Do not quote or publicly announce experimental pricing before approval",
+        "owner": "Adam Fathy",
+        "due_iso": null,
+        "priority": "High",
+        "dependencies": [
+          "Finance approval",
+          "Product approval"
+        ],
+        "confidence": 0.93
+      }
+    ]
+  },
+  {
+    "id": "eval_006",
+    "meeting_date": "2026-08-01",
+    "title": "Slack integration scope review",
+    "gold_action_items": [
+      {
+        "task": "Remove workspace-admin scope from the Slack OAuth authorization request",
+        "owner": "Nour El-Sayed",
+        "due_iso": "2026-08-03",
+        "priority": "High",
+        "dependencies": [],
+        "confidence": 1.0
+      },
+      {
+        "task": "Update Slack integration settings copy to reflect the reduced scope",
+        "owner": "Nour El-Sayed",
+        "due_iso": "2026-08-03",
+        "priority": "Medium",
+        "dependencies": [
+          "reduced OAuth scope"
+        ],
+        "confidence": 1.0
+      },
+      {
+        "task": "Review the Slack OAuth scope diff",
+        "owner": "Rami George",
+        "due_iso": "2026-08-04",
+        "priority": "High",
+        "dependencies": [
+          "reduced OAuth scope"
+        ],
+        "confidence": 1.0
+      }
+    ]
+  },
+  {
+    "id": "eval_007",
+    "meeting_date": "2026-08-04",
+    "title": "Customer onboarding handoff",
+    "gold_action_items": [
+      {
+        "task": "Provide the remaining product-facing onboarding screenshots",
+        "owner": "Maya Hassan",
+        "due_iso": "2026-08-05",
+        "priority": "Medium",
+        "dependencies": [],
+        "confidence": 1.0
+      },
+      {
+        "task": "Prepare public onboarding messaging using approved product text",
+        "owner": "Salma Tarek",
+        "due_iso": null,
+        "priority": "Medium",
+        "dependencies": [
+          "approved product text"
+        ],
+        "confidence": 0.96
+      },
+      {
+        "task": "Document the Operations-to-Customer Success onboarding handoff",
+        "owner": "Dina Khalil",
+        "due_iso": null,
+        "priority": "Low",
+        "dependencies": [],
+        "confidence": 1.0
+      }
+    ]
+  },
+  {
+    "id": "eval_008",
+    "meeting_date": "2026-08-06",
+    "title": "Incident follow-up",
+    "gold_action_items": [
+      {
+        "task": "Coordinate the incident timeline",
+        "owner": "Dina Khalil",
+        "due_iso": null,
+        "priority": "High",
+        "dependencies": [],
+        "confidence": 1.0
+      },
+      {
+        "task": "Document security assessment findings for the incident",
+        "owner": "Rami George",
+        "due_iso": "2026-08-07",
+        "priority": "High",
+        "dependencies": [],
+        "confidence": 1.0
+      },
+      {
+        "task": "Coordinate review of the customer incident update before external sending",
+        "owner": "Dina Khalil",
+        "due_iso": null,
+        "priority": "High",
+        "dependencies": [
+          "customer update draft"
+        ],
+        "confidence": 0.97
+      },
+      {
+        "task": "Attach the deployment timeline to the incident record",
+        "owner": "Omar Nassar",
+        "due_iso": "2026-08-06",
+        "priority": "Medium",
+        "dependencies": [
+          "rollback completion"
+        ],
+        "confidence": 1.0
+      }
+    ]
+  },
+  {
+    "id": "eval_009",
+    "meeting_date": "2026-08-10",
+    "title": "Search launch readiness",
+    "gold_action_items": [
+      {
+        "task": "Complete relevance tuning for the workspace search release",
+        "owner": "Omar Nassar",
+        "due_iso": null,
+        "priority": "High",
+        "dependencies": [
+          "relevance regression results"
+        ],
+        "confidence": 0.91
+      },
+      {
+        "task": "Provide the approved search test dataset",
+        "owner": "Maya Hassan",
+        "due_iso": "2026-08-11",
+        "priority": "High",
+        "dependencies": [],
+        "confidence": 1.0
+      },
+      {
+        "task": "Run relevance regression tests using the approved search dataset",
+        "owner": "Karim Samir",
+        "due_iso": null,
+        "priority": "High",
+        "dependencies": [
+          "approved search test dataset"
+        ],
+        "confidence": 1.0
+      },
+      {
+        "task": "Adjust search empty-state copy after terminology review",
+        "owner": "Lina Farouk",
+        "due_iso": null,
+        "priority": "Low",
+        "dependencies": [
+          "terminology review"
+        ],
+        "confidence": 0.95
+      }
+    ]
+  },
+  {
+    "id": "eval_010",
+    "meeting_date": "2026-08-12",
+    "title": "Quarterly roadmap capacity check",
+    "gold_action_items": [
+      {
+        "task": "Freeze and send the candidate quarterly roadmap scope",
+        "owner": "Maya Hassan",
+        "due_iso": "2026-08-12",
+        "priority": "High",
+        "dependencies": [],
+        "confidence": 0.99
+      },
+      {
+        "task": "Validate Engineering capacity against the frozen roadmap scope",
+        "owner": "Omar Nassar",
+        "due_iso": null,
+        "priority": "High",
+        "dependencies": [
+          "frozen roadmap scope"
+        ],
+        "confidence": 1.0
+      },
+      {
+        "task": "Review billing migration assumptions for budget confirmation",
+        "owner": "Tarek Ibrahim",
+        "due_iso": null,
+        "priority": "Medium",
+        "dependencies": [
+          "billing migration assumptions",
+          "frozen roadmap scope"
+        ],
+        "confidence": 0.98
+      },
+      {
+        "task": "Collect vendor dependency dates for the billing migration",
+        "owner": "Dina Khalil",
+        "due_iso": null,
+        "priority": "Medium",
+        "dependencies": [],
+        "confidence": 1.0
+      }
+    ]
+  }
+]

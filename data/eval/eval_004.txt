@@ -1,0 +1,9 @@
+# Meeting: Design system accessibility pass
+Date: 2026-07-27
+Attendees: Lina Farouk, Nour El-Sayed, Karim Samir, Maya Hassan
+
+Lina: I will add keyboard-navigation acceptance notes to the shared component specification by Tuesday, July 28.
+Nour: The modal focus trap is implemented. QA needs to verify escape behavior and tab order.
+Karim: I'll verify modal escape behavior and tab order by Wednesday, July 29.
+Karim: I'll also add those accessibility keyboard cases to the release checklist by Wednesday, July 29, after Lina's notes are available.
+Maya: We are not adding another button variant for this release.

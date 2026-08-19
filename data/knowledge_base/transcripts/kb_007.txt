@@ -1,0 +1,9 @@
+# Meeting: SSO audit-log security review
+Date: 2026-07-01
+Attendees: Omar Nassar, Rami George, Maya Hassan
+
+## Transcript
+Omar: The actor identifier is missing on role-change events. I'll patch the event mapping by July 2.
+Rami: Then I'll repeat the SSO security test on July 3. I specifically need role-change events in the test data.
+Maya: After Security signs off, I'll update the rollout checklist. No exact date for that.
+Rami: Also, the customer cohort cannot be enabled before my review. That's a gate, not a task deadline.

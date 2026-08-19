@@ -1,0 +1,9 @@
+# Meeting: Quarterly roadmap capacity check
+Date: 2026-08-12
+Attendees: Maya Hassan, Omar Nassar, Tarek Ibrahim, Dina Khalil
+
+Maya: Candidate scope includes billing migration, mobile notifications, and analytics export. I will freeze and send the candidate roadmap scope today, August 12.
+Omar: Once that scope is frozen, Engineering will validate capacity. I have no completion date yet.
+Tarek: Finance needs the billing migration assumptions before it can confirm budget. No date committed.
+Dina: I'll collect vendor dependency dates for the billing migration. No date committed.
+Maya: This is candidate scope until Product approval; don't treat earlier discussion as a commitment.

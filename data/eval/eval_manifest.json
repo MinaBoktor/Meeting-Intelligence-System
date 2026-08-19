@@ -1,0 +1,82 @@
+[
+  {
+    "id": "eval_001",
+    "date": "2026-07-20",
+    "title": "Analytics export release check",
+    "format": "TXT",
+    "style": "clean",
+    "num_gold_actions": 3
+  },
+  {
+    "id": "eval_002",
+    "date": "2026-07-22",
+    "title": "Mobile task notifications standup",
+    "format": "TXT",
+    "style": "messy",
+    "num_gold_actions": 4
+  },
+  {
+    "id": "eval_003",
+    "date": "2026-07-24",
+    "title": "SSO customer rollout review",
+    "format": "TXT",
+    "style": "asr",
+    "num_gold_actions": 4
+  },
+  {
+    "id": "eval_004",
+    "date": "2026-07-27",
+    "title": "Design system accessibility pass",
+    "format": "TXT",
+    "style": "notes",
+    "num_gold_actions": 3
+  },
+  {
+    "id": "eval_005",
+    "date": "2026-07-29",
+    "title": "Pricing experiment approval",
+    "format": "TXT",
+    "style": "interruptions",
+    "num_gold_actions": 4
+  },
+  {
+    "id": "eval_006",
+    "date": "2026-08-01",
+    "title": "Slack integration scope review",
+    "format": "TXT",
+    "style": "clean",
+    "num_gold_actions": 3
+  },
+  {
+    "id": "eval_007",
+    "date": "2026-08-04",
+    "title": "Customer onboarding handoff",
+    "format": "TXT",
+    "style": "chatty",
+    "num_gold_actions": 3
+  },
+  {
+    "id": "eval_008",
+    "date": "2026-08-06",
+    "title": "Incident follow-up",
+    "format": "TXT",
+    "style": "timestamped",
+    "num_gold_actions": 4
+  },
+  {
+    "id": "eval_009",
+    "date": "2026-08-10",
+    "title": "Search launch readiness",
+    "format": "TXT",
+    "style": "asr_messy",
+    "num_gold_actions": 4
+  },
+  {
+    "id": "eval_010",
+    "date": "2026-08-12",
+    "title": "Quarterly roadmap capacity check",
+    "format": "TXT",
+    "style": "fragmented",
+    "num_gold_actions": 4
+  }
+]

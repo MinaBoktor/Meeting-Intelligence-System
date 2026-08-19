@@ -1,0 +1,10 @@
+# Meeting: Operations vendor review
+Date: 2026-07-12
+Attendees: Dina Khalil, Tarek Ibrahim, Maya Hassan, Omar Nassar
+
+## Transcript
+Dina: We need the renewal notice period and support SLA from the vendor. I'll request both today.
+Tarek: Once we have those, I'll estimate renewal cost impact before Finance approval. No exact date.
+Maya: If the SLA requires a product change, I'll assess the product impact. Again, no date.
+Omar: I can review technical implications if a change is actually required.
+Side note: someone mentioned a second vendor, but no decision was made about switching.

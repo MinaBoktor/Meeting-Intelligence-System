@@ -1,0 +1,9 @@
+# Meeting: Release train checkpoint
+Date: 2026-08-07
+Attendees: Omar Nassar, Karim Samir, Maya Hassan
+
+## Transcript
+Omar: New analytics-permission middleware build is ready. I'll publish the QA build today.
+Karim: Great, I'll run the permission suite after I get it. Target is August 8.
+Maya: After the build is out, I'll post release-branch status. No exact deadline.
+[ASR: "permission suite... analytics... release branch" repeated once.]
