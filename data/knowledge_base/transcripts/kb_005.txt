@@ -1,0 +1,11 @@
+# Meeting: Customer escalation review
+Date: 2026-06-23
+Attendees: Dina Khalil, Omar Nassar, Hana Mostafa, Maya Hassan
+
+## Transcript
+Dina: Okay, the customer says export permissions changed after yesterday's release. I'll put the escalation in the incident tracker today.
+Omar: I can reproduce it in staging, but only after the tracker entry has the customer role details. So that's second.
+Hana: If we reproduce it, I'll prepare an internal customer-status note. I'm not promising a send time yet.
+Maya: Right, and let's not tell the customer it's a security issue. We don't know that.
+[overlapping voices]
+Dina: Sorry, I missed that. Tracker first, staging second, status note after.

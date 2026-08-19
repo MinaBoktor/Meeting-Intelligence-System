@@ -1,0 +1,11 @@
+# Meeting: Sales enablement sync
+Date: 2026-07-21
+Attendees: Salma Tarek, Adam Fathy, Maya Hassan, Omar Nassar
+
+## Transcript
+Salma: I'll update the sales deck with the approved CSV-export wording by July 22.
+Adam: I can review it after that. Let's target July 23.
+Maya: Product still needs to confirm the exact wording. I'll confirm it today.
+Omar: Please don't mention PDF export in the deck; that feature remains deferred.
+[side conversation]
+Adam: There was also an idea to add a pricing comparison. Not approved, so ignore that for now.

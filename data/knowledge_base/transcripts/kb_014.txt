@@ -1,0 +1,9 @@
+# Meeting: Mobile notification regression
+Date: 2026-07-25
+Attendees: Nour El-Sayed, Omar Nassar, Karim Samir, Maya Hassan
+
+## Transcript
+[10:00] Nour: Quiet-hours midnight boundary is wrong when the device is UTC+2. I will reproduce it today.
+[11:07] Omar: I'll inspect backend timezone conversion after the reproduction, target July 26.
+[12:14] Karim: Then I'll rerun the boundary cases. July 27 works.
+[12:44] Maya: No expansion to new notification types. Task-assignment notifications only.

@@ -1,0 +1,9 @@
+# Meeting: Finance pricing experiment checkpoint
+Date: 2026-08-09
+Attendees: Tarek Ibrahim, Maya Hassan, Adam Fathy, Omar Nassar
+
+## Transcript
+Tarek: The churn-sensitivity assumption is still the weak point. I'll send the revised model by August 10.
+Maya: I'll review the success metrics against the revised assumptions after that. No separate date.
+Adam: Until Finance and Product approve, Sales must not quote the experimental tier.
+Omar: I have no action here; the engineering estimate can wait for approval.

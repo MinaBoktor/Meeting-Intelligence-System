@@ -1,0 +1,9 @@
+# Meeting: Mobile task notifications standup
+Date: 2026-07-22
+Attendees: Omar Nassar, Nour El-Sayed, Youssef Adel, Karim Samir, Maya Hassan
+
+Maya: Product will provide the mobile notification settings copy to Nour by Thursday, July 23.
+Youssef: I will implement the quiet-hours preference lookup using device-local time today, Wednesday, July 22. I need the behavior decision, which Omar confirms is already agreed.
+Nour: Once the settings UI is ready, I will provide a mobile test build Thursday morning, July 23.
+Karim: I need that build before testing. I'll test task-assignment notifications, including quiet hours, on Friday, July 24.
+Omar: Keep this limited to task assignments; no new notification types this sprint.

@@ -1,0 +1,93 @@
+[
+  {
+    "query": "CSV analytics export workspace access controls and PDF being deferred",
+    "relevant_sources": [
+      "D-002",
+      "kb_003.txt",
+      "kb_004.txt",
+      "kb_018.txt"
+    ]
+  },
+  {
+    "query": "mobile task assignment notifications quiet hours local device time",
+    "relevant_sources": [
+      "D-003",
+      "kb_006.txt",
+      "kb_014.txt"
+    ]
+  },
+  {
+    "query": "SSO rollout security approval role-change audit events",
+    "relevant_sources": [
+      "D-004",
+      "kb_007.txt",
+      "kb_012.txt"
+    ]
+  },
+  {
+    "query": "shared design components keyboard navigation accessibility acceptance notes",
+    "relevant_sources": [
+      "D-005",
+      "D-010",
+      "kb_016.txt"
+    ]
+  },
+  {
+    "query": "customer onboarding ownership approved product content public messaging",
+    "relevant_sources": [
+      "D-006",
+      "kb_017.txt"
+    ]
+  },
+  {
+    "query": "incident timeline security assessment customer update external review",
+    "relevant_sources": [
+      "D-007",
+      "kb_005.txt"
+    ]
+  },
+  {
+    "query": "pricing experiment Finance approval Product success metrics and Sales quoting restriction",
+    "relevant_sources": [
+      "D-008",
+      "kb_019.txt"
+    ]
+  },
+  {
+    "query": "Slack OAuth existing application workspace-admin scope security review",
+    "relevant_sources": [
+      "D-009",
+      "kb_012.txt"
+    ]
+  },
+  {
+    "query": "search workspace-only release and cross-workspace scope",
+    "relevant_sources": [
+      "D-011",
+      "kb_009.txt"
+    ]
+  },
+  {
+    "query": "roadmap Product approval Engineering capacity billing migration assumptions",
+    "relevant_sources": [
+      "D-012",
+      "kb_020.txt"
+    ]
+  },
+  {
+    "query": "billing migration vendor dates renewal dependencies Finance approval",
+    "relevant_sources": [
+      "D-001",
+      "kb_010.txt",
+      "kb_020.txt"
+    ]
+  },
+  {
+    "query": "analytics export permission middleware and viewer tests",
+    "relevant_sources": [
+      "D-002",
+      "kb_003.txt",
+      "kb_018.txt"
+    ]
+  }
+]

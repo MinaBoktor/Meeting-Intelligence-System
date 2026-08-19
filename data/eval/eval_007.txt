@@ -1,0 +1,8 @@
+# Meeting: Customer onboarding handoff
+Date: 2026-08-04
+Attendees: Hana Mostafa, Maya Hassan, Salma Tarek, Dina Khalil
+
+Maya: I'll provide the remaining product-facing onboarding screenshots by Wednesday, August 5.
+Salma: I can prepare public onboarding messaging once approved product text is available. No date yet.
+Dina: I'll document the handoff between Operations and Customer Success. No date was committed.
+Hana: Customer commitments stay out of the draft until approved rollout details exist.

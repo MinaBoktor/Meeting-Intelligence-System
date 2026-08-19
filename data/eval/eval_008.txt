@@ -1,0 +1,9 @@
+# Meeting: Incident follow-up
+Date: 2026-08-06
+Attendees: Dina Khalil, Rami George, Hana Mostafa, Omar Nassar
+
+[10:02] Dina: Confirmed customer-impacting incident. I am coordinating the incident timeline; no completion date was committed.
+[10:05] Rami: Security assessment shows no evidence of unauthorized access yet. I'll document the security assessment findings by Friday, August 7.
+[10:07] Hana: I need a reviewed customer update before it goes out. Dina: I will coordinate review of the customer incident update before external sending. No date yet.
+[10:11] Omar: Rollback is complete. I will attach the deployment timeline to the incident record today, August 6.
+[10:15] Dina: Do not state that this was a security breach unless the assessment supports it.

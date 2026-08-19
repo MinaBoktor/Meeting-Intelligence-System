@@ -1,0 +1,11 @@
+# Meeting: Marketing campaign readiness
+Date: 2026-06-20
+Attendees: Salma Tarek, Maya Hassan, Omar Nassar
+
+## Notes captured during meeting
+- Screenshot in the campaign draft is obsolete.
+- Salma will replace it with the approved analytics-export screenshot by 2026-06-21.
+- Maya: final wording still needs Product approval; approve it on June 21.
+- Salma: after wording approval, prepare a short sales-enablement snippet. No separate deadline.
+- Omar: verify the screenshot URL points to the production-safe asset, if needed.
+- Decision: no public claim about PDF export. PDF remains deferred.

@@ -1,0 +1,10 @@
+# Meeting: Billing pilot retro
+Date: 2026-06-11
+Location: Video call
+Attendees: Tarek Ibrahim (Finance), Omar Nassar (Engineering), Dina Khalil (Operations), Maya Hassan (Product)
+
+## Transcript
+[00:03] Tarek: We found two invoice cases where the tax label is wrong. I'll document the expected behavior for both cases by June 12.
+[00:05] Omar: Once Finance writes that down, I'll patch the invoice display logic. I don't want to guess the expected tax wording.
+[00:06] Dina: And after Finance signs off, I'll coordinate the second internal pilot. No date yet.
+[00:08] Maya: Good. Keep this pilot internal until Finance signs off. Customer rollout isn't on the table.

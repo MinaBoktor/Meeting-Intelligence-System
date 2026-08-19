@@ -1,0 +1,9 @@
+# Meeting: Customer success Q3 planning
+Date: 2026-08-05
+Attendees: Dina Khalil, Hana Mostafa, Maya Hassan, Omar Nassar
+
+## Transcript
+Dina: Operations can verify capacity for the extra customer kickoff calls by August 6.
+Hana: Once that is confirmed, I'll finalize the onboarding checklist. No exact date.
+Maya: I'll provide updated product screenshots if the UI changes, but that's conditional.
+Omar: I can join only if technical questions remain. No action assigned to me yet.

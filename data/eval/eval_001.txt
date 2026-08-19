@@ -1,0 +1,9 @@
+# Meeting: Analytics export release check
+Date: 2026-07-20
+Attendees: Maya Hassan, Omar Nassar, Lina Farouk, Karim Samir
+
+Maya: CSV is the minimum release scope; PDF remains deferred.
+Omar: The endpoint is implemented. I will complete the final access-control check by Thursday, July 23.
+Lina: Empty-state wording needs one final pass. I will review and finalize it by Wednesday, July 22.
+Karim: I can run the workspace-permission tests by Wednesday, July 22. Omar, please make sure the endpoint check is separate from my test.
+Maya: The permission tests should happen before Omar's final access-control check. Raise blockers before Thursday's release review.

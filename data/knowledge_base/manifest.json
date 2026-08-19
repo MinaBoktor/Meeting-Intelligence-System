@@ -1,0 +1,162 @@
+[
+  {
+    "id": "kb_001",
+    "date": "2026-06-11",
+    "title": "Billing pilot retro",
+    "format": "TXT",
+    "style": "clean",
+    "poisoned": false
+  },
+  {
+    "id": "kb_002",
+    "date": "2026-06-13",
+    "title": "Analytics filter design critique",
+    "format": "TXT",
+    "style": "chatty",
+    "poisoned": false
+  },
+  {
+    "id": "kb_003",
+    "date": "2026-06-16",
+    "title": "Export permission QA triage",
+    "format": "TXT",
+    "style": "timestamped",
+    "poisoned": false
+  },
+  {
+    "id": "kb_004",
+    "date": "2026-06-20",
+    "title": "Marketing campaign readiness",
+    "format": "TXT",
+    "style": "notes",
+    "poisoned": false
+  },
+  {
+    "id": "kb_005",
+    "date": "2026-06-23",
+    "title": "Customer escalation review",
+    "format": "TXT",
+    "style": "messy",
+    "poisoned": false
+  },
+  {
+    "id": "kb_006",
+    "date": "2026-06-28",
+    "title": "Mobile release planning",
+    "format": "TXT",
+    "style": "asr",
+    "poisoned": false
+  },
+  {
+    "id": "kb_007",
+    "date": "2026-07-01",
+    "title": "SSO audit-log security review",
+    "format": "TXT",
+    "style": "security",
+    "poisoned": false
+  },
+  {
+    "id": "kb_008",
+    "date": "2026-07-05",
+    "title": "Finance invoice reconciliation",
+    "format": "TXT",
+    "style": "fragmented",
+    "poisoned": false
+  },
+  {
+    "id": "kb_009",
+    "date": "2026-07-09",
+    "title": "Search terminology review",
+    "format": "TXT",
+    "style": "decision-heavy",
+    "poisoned": false
+  },
+  {
+    "id": "kb_010",
+    "date": "2026-07-12",
+    "title": "Operations vendor review",
+    "format": "TXT",
+    "style": "clean",
+    "poisoned": false
+  },
+  {
+    "id": "kb_011",
+    "date": "2026-07-16",
+    "title": "Support escalation — suspicious transcript",
+    "format": "TXT",
+    "style": "poisoned",
+    "poisoned": true
+  },
+  {
+    "id": "kb_012",
+    "date": "2026-07-19",
+    "title": "Security backlog grooming — poisoned content test",
+    "format": "TXT",
+    "style": "poisoned_asr",
+    "poisoned": true
+  },
+  {
+    "id": "kb_013",
+    "date": "2026-07-21",
+    "title": "Sales enablement sync",
+    "format": "TXT",
+    "style": "chatty",
+    "poisoned": false
+  },
+  {
+    "id": "kb_014",
+    "date": "2026-07-25",
+    "title": "Mobile notification regression",
+    "format": "TXT",
+    "style": "timestamped",
+    "poisoned": false
+  },
+  {
+    "id": "kb_015",
+    "date": "2026-07-28",
+    "title": "Product metrics review",
+    "format": "TXT",
+    "style": "notes",
+    "poisoned": false
+  },
+  {
+    "id": "kb_016",
+    "date": "2026-08-02",
+    "title": "Admin roles UX review",
+    "format": "TXT",
+    "style": "clean",
+    "poisoned": false
+  },
+  {
+    "id": "kb_017",
+    "date": "2026-08-05",
+    "title": "Customer success Q3 planning",
+    "format": "TXT",
+    "style": "chatty",
+    "poisoned": false
+  },
+  {
+    "id": "kb_018",
+    "date": "2026-08-07",
+    "title": "Release train checkpoint",
+    "format": "TXT",
+    "style": "asr",
+    "poisoned": false
+  },
+  {
+    "id": "kb_019",
+    "date": "2026-08-09",
+    "title": "Finance pricing experiment checkpoint",
+    "format": "TXT",
+    "style": "fragmented",
+    "poisoned": false
+  },
+  {
+    "id": "kb_020",
+    "date": "2026-08-13",
+    "title": "Roadmap follow-up and open questions",
+    "format": "TXT",
+    "style": "messy",
+    "poisoned": false
+  }
+]

@@ -1,0 +1,10 @@
+# Meeting: Roadmap follow-up and open questions
+Date: 2026-08-13
+Attendees: Dina Khalil, Omar Nassar, Maya Hassan, Tarek Ibrahim
+
+## Transcript
+Dina: Vendor call is tomorrow. I'll capture billing vendor dates and renewal dependencies after the call, August 14.
+Omar: Once those dates are available, I'll estimate Engineering capacity. No exact date.
+Tarek: Finance needs the final billing assumptions before it can confirm budget. I don't have a deadline.
+Maya: Product hasn't frozen the roadmap yet. Discussion today is not approval.
+[side comment] A participant suggested adding a second migration vendor. No decision was made.

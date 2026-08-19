@@ -1,0 +1,9 @@
+# Meeting: Pricing experiment approval
+Date: 2026-07-29
+Attendees: Maya Hassan, Tarek Ibrahim, Adam Fathy, Salma Tarek
+
+Tarek: Finance model is not approved. I will update the churn-sensitivity assumptions today and have the revised assumptions ready by Thursday, July 30.
+Tarek: I will review the revised pricing experiment assumptions on Thursday, July 30 after updating them.
+Maya: I will define success metrics for the pricing experiment with the experiment owner. No date was committed.
+Adam: Sales has prospects asking about the lower tier. We must not quote or publicly announce experimental pricing before Finance and Product approval; no deadline applies because this is a standing restriction.
+Salma: The website also cannot mention the experiment before approval.

@@ -1,0 +1,9 @@
+# Meeting: Slack integration scope review
+Date: 2026-08-01
+Attendees: Omar Nassar, Rami George, Maya Hassan, Nour El-Sayed
+
+Omar: The existing Slack OAuth application is working.
+Rami: The branch requests broader scope than agreed. Security rejected workspace-admin scope for the initial release.
+Maya: Correct. The initial release must not request workspace-admin scopes.
+Nour: I will remove workspace-admin scope from the authorization request by Monday, August 3, and update the Slack integration settings copy by the same date.
+Rami: Once that diff is ready, I will review the Slack OAuth scope diff on Tuesday, August 4.
