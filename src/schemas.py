@@ -67,3 +67,8 @@ class Response(BaseModel):
     retry_count: int
     tokens_used: int
     duration_seconds: float
+
+
+class CriticEvaluation(BaseModel):
+    quality_score: float = Field(description="A mathematical score from 0.0 to 10.0 evaluating the extraction. Deduct points for missing due dates, invalid owners, or contradicting historical context.")
+    feedback: str = Field(description="Strict, actionable instructions for the extractor on what to fix if the score is below 8.0. Leave empty if 8.0 or higher.")
