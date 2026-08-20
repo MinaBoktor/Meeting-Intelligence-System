@@ -1,24 +1,32 @@
-from typing import TypedDict
-from pydantic import BaseModel, Field
-from typing import Literal
-
-
-level = Literal["low", "medium", "high"]
-
-class Action(BaseModel):
-    task: str
-    owner: str
-    due_iso: str
-    priority: level = Field(description="Decide the priority level of the task")
-    dependencies: list[str]
-    confidence: float
-
+from typing import TypedDict, Annotated, Optional
+import operator
+from src.schemas import ActionItem
 
 class MeetingState(TypedDict):
-    tasks: list[Action]
-    findings: list[str]
-    sources: list[str]
-    critique: str
-    quality_score: float
-    retry_count: int
-    report: str
+    # Inputs
+    transcript: str
+    roster_names: Optional[list[str]]
+    max_retries: int
+
+    # Outputs
+    action_items: list[ActionItem]
+    unassigned_observations: list[str]
+
+    # Historical (Optional)
+    historical_context: str
+
+    # Critic
+    critic_feedback: Annotated[list[str], operator.add]
+    is_complete: bool
+    current_retries: int
+
+    # Human-in-the-Loop
+    human_approved: bool
+    human_edits: Optional[str]
+
+    # Report
+    final_minutes_markdown: str
+
+    # Usage and time consumption
+    tokens_used: int
+    duration_seconds: float
