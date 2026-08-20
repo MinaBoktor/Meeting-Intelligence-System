@@ -1,10 +1,10 @@
 import os
 import json
 import re
-from typing import List
-from pydantic import BaseModel, Field
-from agent.state import ResearchState
-from agent.retriever import retrieve_context
+from src.schemas import ActionItem, Response
+from langchain_core.messages import HumanMessage
+from agent.state import MeetingState
+from retrieval.retriever import retrieve_context
 import textwrap
 
 
@@ -18,115 +18,86 @@ else:
     raise ValueError("API KEY IS MISSING")
 
 
-class FinalReport(BaseModel):
-    goal: str
-    summary: str
-    key_findings: List[str] = Field(min_length=1)
-    risks: List[str]
-    sources: List[str]
-    retry_counts: int
-    confidence: str = Field(description="high | medium | low")
+def ingestor_node(state: dict) -> dict:
+    return {
+        "current_retries": 0,
+        "is_complete": False,
+        "human_approved": False,
+        "retrieved_context": ""
+    }
 
 
-def planner(state: ResearchState):
-    it = state["retry_count"] + 1
-    prior = state.get("critique", "")
+def extract(state: dict) -> dict:
+    transcript = state.get("transcript", "")
+    roster = state.get("roster_names", [])
+    feedback = state.get("critic_feedback", [])
 
-    prompt = (
-        f"You are a planning agent. Goal: {state['goal']}.\n"
-        f"Previous critique to address (empty on first pass): {prior or 'none'}.\n"
-        "Return 3 short task bullets that specifically address any gaps. "
-        "One per line, no numbering."
-    )
-    text = llm.invoke(prompt).content
-    tasks = [t.strip("-* ").strip() for t in text.splitlines() if t.strip()][:3]
+    structured_llm = llm.with_structured_output(Response, include_raw=True)
 
-    print(f"\U0001F9ED Planner (retry_count {it}) -> {len(tasks)} tasks"
-          + (f'  [addressing: "{prior[:40]}..."]' if prior else ""))
-    return {"retry_count": it, "tasks": tasks}
+    prompt = f"Extract action items from this transcript: {transcript}\n"
+    if roster:
+        prompt += f"Valid owners: {roster}\n"
+    if feedback:
+        prompt += f"Previous feedback to fix: {feedback[-1]}\n"
 
+    result = structured_llm.invoke([HumanMessage(content=prompt)])
 
-def research(state: ResearchState):
-    ctx, srcs = retrieve_context(state["goal"])
+    parsed_response = result["parsed"]
+    raw_response = result["raw"]
 
-    prompt = (
-        "Answer ONLY from the context. Be concise (3-4 sentences). "
-        "If a task from the plan isn't covered, say so.\n"
-        f"Plan: {state['tasks']}\n\nContext:\n{ctx}\n\nGoal: {state['goal']}"
-    )
-    msg = llm.invoke(prompt).content
+    actual_tokens = raw_response.response_metadata.get("token_usage", {}).get("total_tokens", 0)
 
-    print("\U0001F50E Research -> grounded findings gathered", "| sources:", srcs)
-    findings_list = [f.strip("-* ") for f in msg.split('\n') if f.strip()]
-    return {"findings": findings_list, "sources": srcs}
+    return {
+        "action_items": parsed_response.actions,
+        "unassigned_observations": parsed_response.unassigned_observations,
+        "tokens_used": actual_tokens,
+        "current_retries": state.get("current_retries", 0) + 1
+    }
 
 
-def _extract_json(text: str):
-    m = re.search(r"\{.*\}", text, re.S)
-    return json.loads(m.group(0)) if m else {}
+def enricher_node(state: dict) -> dict:
+    # 1. Check for user-provided context first
+    past_decisions = state.get("past_decisions")
+    if past_decisions:
+        return {"retrieved_context": f"Provided Rules: {past_decisions}"}
+    
+    # 2. Otherwise, query LlamaIndex (pseudo-code for your LlamaIndex engine)
+    actions = state.get("action_items", [])
+    query_str = f"Find past decisions related to: {[a.task for a in actions]}"
+    
+    # retrieved_nodes = query_engine.query(query_str)
+    # formatted_context = format_nodes(retrieved_nodes)
+    
+    formatted_context = "Historical data retrieved from LlamaIndex..." 
+    
+    return {"retrieved_context": formatted_context}
 
 
-def critic(state: ResearchState):
-
-    prompt = (
-        "You are a strict reviewer. Score the findings for completeness vs the goal.\n"
-        'Return ONLY JSON: {"score": <0..1 float>, "gaps": "<one sentence>"}.\n'
-        f"Goal: {state['goal']}\nFindings: {state['findings']}"
-    )
-    try:
-        data = _extract_json(llm.invoke(prompt).content)
-        score = float(data.get("score", 0.5))
-        gaps = str(data.get("gaps", ""))
-    except Exception:
-        score, gaps = 0.5, "Could not parse critic output; treat as incomplete."
-
-    print(f"\U0001F9D0 Critic -> quality_score = {round(score,2)}" + (f' | gap: {gaps[:50]}' if gaps else ""))
-    return {"quality_score": score, "critique": gaps}
+def decision_node(state: dict) -> dict:
+    # The graph pauses BEFORE executing this. 
+    # When it resumes, we check if the UI updated the state.
+    if not state.get("human_approved"):
+        raise ValueError("Graph resumed but items were not human-approved.")
+    
+    # Apply any manual human edits to the action items if they exist
+    return {} # No further state changes needed; proceed to Reporter
 
 
-
-def reporter(state: ResearchState):
-    findings_text = "\n".join(state["findings"])
-    risks = [s.strip() for s in re.split(r"[;\n]", findings_text) if "risk" in s.lower()]
-    confidence = "high" if state["quality_score"] >= 0.8 else "medium"
-    report = FinalReport(
-        goal=state["goal"],
-        summary=findings_text[:300],
-        key_findings=[s.strip() for s in re.split(r"[.;\n]", findings_text) if s.strip()][:5] or [findings_text],
-        risks=risks,
-        sources=state.get("sources", []),
-        retry_counts=state["retry_count"],
-        confidence=confidence,
-    )
-    print("\U0001F4DD Reporter -> validated FinalReport")
-
-
-    key_findings_str = "\n".join(f"- {x}" for x in report.key_findings)
-
-    # To avoid printing empty risks section
-    risks_section = ""
-    if report.risks:
-        risks_str = "\n".join(f"- {x}" for x in report.risks)
-        risks_section = f"\n## Risks\n{risks_str}\n"
-    sources_str = "\n".join(f"- {x}" for x in report.sources)
-
-    report_markdown = f"""# Final Research Report
-
-## Goal
-{report.goal}
-
-## Summary
-{report.summary}
-
-## Key Findings
-{key_findings_str}
-{risks_section}
-## Sources
-{sources_str}
-
-#### Retry Count: {report.retry_counts}
-#### Confidence: {report.confidence}
-"""
-
-    return {"report": report_markdown}
-
+def reporter_node(state: dict) -> dict:
+    actions = state.get("action_items", [])
+    
+    markdown = "# Meeting Minutes\n\n## Action Items\n"
+    markdown += "| Task | Owner | Due Date | Priority |\n"
+    markdown += "|---|---|---|---|\n"
+    
+    for item in actions:
+        due = item.due_iso if item.due_iso else "TBD"
+        markdown += f"| {item.task} | {item.owner} | {due} | {item.priority} |\n"
+        
+    unassigned = state.get("unassigned_observations", [])
+    if unassigned:
+        markdown += "\n## Unassigned Observations\n"
+        for obs in unassigned:
+            markdown += f"* {obs}\n"
+            
+    return {"final_minutes_markdown": markdown}

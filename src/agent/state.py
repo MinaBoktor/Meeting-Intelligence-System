@@ -8,12 +8,15 @@ class MeetingState(TypedDict):
     roster_names: Optional[list[str]]
     max_retries: int
 
+    # Context (Optional)
+    past_transcripts: Optional[list[str]]
+    past_decisions: Optional[str]
+    general_context: Optional[str]
+
     # Outputs
     action_items: list[ActionItem]
-    unassigned_observations: list[str]
-
-    # Historical (Optional)
-    historical_context: str
+    unassigned_observations: Optional[list[str]]
+    retrieved_context: Optional[str]
 
     # Critic
     critic_feedback: Annotated[list[str], operator.add]
