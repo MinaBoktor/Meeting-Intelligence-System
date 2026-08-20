@@ -22,6 +22,7 @@ class MeetingState(TypedDict):
     critic_feedback: Annotated[list[str], operator.add]
     is_complete: bool
     current_retries: int
+    quality_score: float
 
     # Human-in-the-Loop
     human_approved: bool
