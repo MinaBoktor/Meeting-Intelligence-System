@@ -1,21 +1,24 @@
 from typing import TypedDict
 from pydantic import BaseModel, Field
+from typing import Literal
 
 
-TopicLevel = Literal["Beginner", "Intermediate", "Advanced"]
+level = Literal["low", "medium", "high"]
 
 class Action(BaseModel):
     task: str
     owner: str
     due_iso: str
-    priority: 
+    priority: level = Field(description="Decide the priority level of the task")
+    dependencies: list[str]
+    confidence: float
 
 
 class MeetingState(TypedDict):
-    tasks: list[str]     # produced by the Planner
-    findings: list[str]  # produced by the Researcher
+    tasks: list[Action]
+    findings: list[str]
     sources: list[str]
-    critique: str        # the Critic's written feedback/ gaps
-    quality_score: float # 0.0-1.0, produced by the Critic
-    retry_count: int     # incremented on every loop back
-    report: str          # final structured output
+    critique: str
+    quality_score: float
+    retry_count: int
+    report: str
