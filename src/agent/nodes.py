@@ -1,8 +1,16 @@
 import os
+import re
 import time
+import difflib
+from typing import Optional
+from dateutil import parser as dateparser
+
 from pydantic import BaseModel, Field
 from langchain_core.messages import HumanMessage
-from src.schemas import Response, CriticEvaluation
+from langgraph.types import interrupt
+
+# Assuming your schemas are neatly organized in src.schemas
+from src.schemas import Response, CriticEvaluation, ActionItem
 from src.agent.state import MeetingState
 from src.retrieval.retriever import retrieve_context
 
@@ -13,12 +21,53 @@ llm = None
 if HAS_KEY:
     from langchain_groq import ChatGroq
     llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.2)
-else:
-    raise ValueError("API KEY IS MISSING")
 
+# Fallback Utilities
+_DATE_HEADER = re.compile(r"^\s*Date:\s*(.+?)\s*$", re.I | re.M)
+_MONTHS = ("January|February|March|April|May|June|July|August|September|October|November|December")
+_DATE_PATTERN = re.compile(rf"\b(?:\d{{4}}-\d{{2}}-\d{{2}}|(?:{_MONTHS})\s+\d{{1,2}}(?:st|nd|rd|th)?)\b", re.I)
+_COMMITMENT = re.compile(r"\b(?:i['’]?ll|i will|i can|we['’]?ll|we will|will|going to|need to|needs to|must|should)\b", re.I)
+_URGENT = re.compile(r"\b(?:urgent|asap|blocker|blocking|critical|immediately)\b", re.I)
+
+def _header_date(transcript: str) -> Optional[str]:
+    """Extracts the 'Date:' header to anchor relative deadlines."""
+    match = _DATE_HEADER.search(transcript)
+    if not match:
+        return None
+    try:
+        return dateparser.parse(match.group(1)).date().isoformat()
+    except (ValueError, OverflowError, TypeError):
+        return None
+
+def _heuristic_items(transcript: str, roster: list[str]) -> list[dict]:
+    """Regex fallback used when no API key is configured."""
+    items = []
+    # Simplified offline logic to catch obvious tasks
+    for line in transcript.splitlines():
+        if _COMMITMENT.search(line):
+            date_match = _DATE_PATTERN.search(line)
+            items.append({
+                "task": line.strip(),
+                "owner": "Unknown (Offline Fallback)",
+                "due_iso": date_match.group(0) if date_match else None,
+                "priority": "high" if _URGENT.search(line) else "medium",
+                "dependencies": [],
+                "confidence": 0.5
+            })
+    return items
+
+# --- Core Graph Nodes ---
 
 def ingestor(state: MeetingState) -> dict:
+    """Normalizes the transcript and sets up initial tracking metrics."""
+    lines = [re.sub(r"[ \t]+", " ", line).strip() for line in state.get("transcript", "").splitlines()]
+    transcript = "\n".join([line for line in lines if line]).strip()
+
+    meeting_date = state.get("meeting_date") or _header_date(transcript)
+
     return {
+        "transcript": transcript,
+        "meeting_date": meeting_date,
         "current_retries": 0,
         "is_complete": False,
         "human_approved": False,
@@ -27,59 +76,65 @@ def ingestor(state: MeetingState) -> dict:
         "duration_seconds": 0.0
     }
 
-
-def extract(state: MeetingState) -> dict:
+def extractor(state: MeetingState) -> dict:
+    """Extracts tasks using structured LLM output or offline regex fallback."""
     start_time = time.time()
-
     transcript = state.get("transcript", "")
     roster = state.get("roster_names", [])
+    meeting_date = state.get("meeting_date")
     feedback = state.get("critic_feedback", [])
-    past_decisions = state.get("past_decisions", "")
+
+    # Offline fallback
+    if not HAS_KEY:
+        print("[extractor] No API key. Falling back to heuristic extraction.")
+        raw_items = _heuristic_items(transcript, roster)
+        return {
+            "action_items": raw_items,
+            "duration_seconds": state.get("duration_seconds", 0.0) + (time.time() - start_time)
+        }
 
     structured_llm = llm.with_structured_output(Response, include_raw=True)
 
-    prompt = f"Extract action items from this transcript:\n{transcript}\n\n"
+    prompt = (
+        f"Extract action items from this transcript:\n{transcript}\n\n"
+        "RULES:\n"
+        "1. Merge near-duplicates. Never emit two items for the exact same work.\n"
+        "2. Only capture actual commitments. Do NOT capture decisions not to do something.\n"
+    )
     if roster:
-        prompt += f"Strict Rule: Valid owners MUST be exactly one of these names: {roster}. Use null/omit if unknown.\n"
-    if past_decisions:
-        prompt += f"Strict Rule: Adhere to these past decisions: {past_decisions}\n"
+        prompt += f"3. Valid owners MUST be exactly one of: {roster}. Use null if unknown.\n"
+    if meeting_date:
+        prompt += f"4. The meeting date is {meeting_date}. Resolve relative deadlines (e.g. 'next Friday') against this date.\n"
     if feedback:
-        prompt += f"CRITICAL - Fix this issue from the previous attempt: {feedback[-1]}\n"
+        prompt += f"\nCRITICAL - Fix this from previous run: {feedback[-1]}\n"
 
     result = structured_llm.invoke([HumanMessage(content=prompt)])
 
     parsed_response = result["parsed"]
     raw_response = result["raw"]
-
-    metadata = raw_response.response_metadata or {}
-    token_usage = metadata.get("token_usage", {})
-    actual_tokens = token_usage.get("total_tokens", 0)
-
-    elapsed = time.time() - start_time
+    actual_tokens = raw_response.response_metadata.get("token_usage", {}).get("total_tokens", 0)
 
     return {
         "action_items": parsed_response.actions,
         "unassigned_observations": parsed_response.unassigned_observations,
         "tokens_used": state.get("tokens_used", 0) + actual_tokens,
-        "duration_seconds": state.get("duration_seconds", 0.0) + elapsed,
+        "duration_seconds": state.get("duration_seconds", 0.0) + (time.time() - start_time),
         "current_retries": state.get("current_retries", 0) + 1
     }
 
-
 def enricher(state: MeetingState) -> dict:
+    """Queries the local RAG layer for historical context."""
     actions = state.get("action_items", [])
-
     if not actions:
         return {"retrieved_context": "No action items extracted."}
 
-    query_str = " ".join([a.task for a in actions])
-
-    ctx, srcs = retrieve_context(query_str, top_k=3)
+    query_str = " ".join([a.task if isinstance(a, dict) else getattr(a, 'task', '') for a in actions])
+    ctx, _ = retrieve_context(query_str, top_k=3)
 
     return {"retrieved_context": ctx}
 
-
-def critic_node(state: MeetingState) -> dict:
+def critic(state: MeetingState) -> dict:
+    """Evaluates the extraction quality, bridging math constraints and LLM analysis."""
     actions = state.get("action_items", [])
     retrieved_context = state.get("retrieved_context", "")
     current_retries = state.get("current_retries", 0)
@@ -91,30 +146,30 @@ def critic_node(state: MeetingState) -> dict:
     if not actions:
         return {
             "is_complete": False,
-            "critic_feedback": ["Score: 0.0 - No action items were extracted. Please reread the transcript."],
+            "critic_feedback": ["Score: 0.0 - No action items extracted. Reread transcript."],
             "quality_score": 0.0
         }
 
     critic_llm = llm.with_structured_output(CriticEvaluation)
 
-    prompt = "You are a strict quality assurance critic. Review these extracted action items:\n"
+    prompt = "Review these extracted action items:\n"
     for item in actions:
-        prompt += f"- Task: {item.task} | Owner: {item.owner} | Due: {item.due_iso} | Priority: {item.priority}\n"
+        task = item.get("task") if isinstance(item, dict) else item.task
+        owner = item.get("owner") if isinstance(item, dict) else item.owner
+        due = item.get("due_iso") if isinstance(item, dict) else item.due_iso
+        prompt += f"- Task: {task} | Owner: {owner} | Due: {due}\n"
 
-    prompt += f"\nHistorical Context Retrieved:\n{retrieved_context}\n\n"
+    prompt += f"\nHistorical Context:\n{retrieved_context}\n\n"
     prompt += (
-        "Evaluate the extraction and assign a quality_score from 0.0 to 10.0. "
-        "Deduct points if high-priority tasks lack dates, or if assignments contradict the historical context. "
-        "If the score is strictly below 8.0, you MUST provide specific feedback on what needs to be fixed."
+        f"Assign a quality_score from 0.0 to 10.0. "
+        f"Deduct points heavily if tasks lack owners/dates, or contradict the history. "
+        f"If below {PASSING_THRESHOLD}, write specific instructions for the extractor to fix it."
     )
 
     eval_result = critic_llm.invoke([HumanMessage(content=prompt)])
 
     if eval_result.quality_score >= PASSING_THRESHOLD:
-        return {
-            "is_complete": True,
-            "quality_score": eval_result.quality_score
-        }
+        return {"is_complete": True, "quality_score": eval_result.quality_score}
     else:
         return {
             "is_complete": False,
@@ -123,26 +178,41 @@ def critic_node(state: MeetingState) -> dict:
         }
 
 def decision(state: MeetingState) -> dict:
-    if not state.get("human_approved"):
-        raise ValueError("Graph resumed but items were not human-approved.")
-    return {}
+    """Suspends graph execution using LangGraph's native interrupt API."""
+    user_decision = interrupt({
+        "action_items": state.get("action_items"),
+        "quality_score": state.get("quality_score"),
+        "message": "Approve these action items before proceeding?"
+    })
 
+    approved = bool(user_decision.get("approved")) if isinstance(user_decision, dict) else bool(user_decision)
+    return {"human_approved": approved}
 
 def reporter(state: MeetingState) -> dict:
+    """Compiles the final markdown artifacts and performance metrics."""
     actions = state.get("action_items", [])
 
-    markdown = "# Meeting Minutes\n\n## Action Items\n"
-    markdown += "| Task | Owner | Due Date | Priority |\n"
-    markdown += "|---|---|---|---|\n"
+    md = [
+        f"**Quality score:** {state.get('quality_score', 0):.2f}",
+        f"**Execution Time:** {state.get('duration_seconds', 0):.2f}s",
+        f"**Tokens Used:** {state.get('tokens_used', 0)}",
+        "\n## Action Items",
+        "| Task | Owner | Due Date | Priority |",
+        "|---|---|---|---|"
+    ]
 
     for item in actions:
-        due = item.due_iso if item.due_iso else "TBD"
-        markdown += f"| {item.task} | {item.owner} | {due} | {item.priority} |\n"
+        task = item.get("task") if isinstance(item, dict) else item.task
+        owner = item.get("owner") if isinstance(item, dict) else item.owner
+        due = item.get("due_iso") if isinstance(item, dict) else item.due_iso
+        priority = item.get("priority", "medium") if isinstance(item, dict) else item.priority
+
+        md.append(f"| {task} | {owner or 'TBD'} | {due or 'TBD'} | {priority} |")
 
     unassigned = state.get("unassigned_observations", [])
     if unassigned:
-        markdown += "\n## Unassigned Observations\n"
+        md.append("\n## Unassigned Observations")
         for obs in unassigned:
-            markdown += f"* {obs}\n"
+            md.append(f"* {obs}")
 
-    return {"final_minutes_markdown": markdown}
+    return {"final_minutes_markdown": "\n".join(md)}

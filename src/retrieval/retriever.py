@@ -9,7 +9,7 @@ from llama_index.core.retrievers import QueryFusionRetriever
 
 
 current_dir = Path(__file__).parent
-kb_path = current_dir.parent.parent / "data" / "knowledge_base"
+kb_path = current_dir.parent / "agent"
 db_path = kb_path / "chroma_db"
 
 Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
