@@ -20,7 +20,7 @@ PASSING_THRESHOLD = 8.0
 llm = None
 if HAS_KEY:
     from langchain_groq import ChatGroq
-    llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.2)
+    llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.2)
 
 # Fallback Utilities
 _DATE_HEADER = re.compile(r"^\s*Date:\s*(.+?)\s*$", re.I | re.M)
@@ -76,6 +76,7 @@ def ingestor(state: MeetingState) -> dict:
         "duration_seconds": 0.0
     }
 
+
 def extractor(state: MeetingState) -> dict:
     """Extracts tasks using structured LLM output or offline regex fallback."""
     start_time = time.time()
@@ -84,12 +85,10 @@ def extractor(state: MeetingState) -> dict:
     meeting_date = state.get("meeting_date")
     feedback = state.get("critic_feedback", [])
 
-    # Offline fallback
     if not HAS_KEY:
         print("[extractor] No API key. Falling back to heuristic extraction.")
-        raw_items = _heuristic_items(transcript, roster)
         return {
-            "action_items": raw_items,
+            "action_items": _heuristic_items(transcript, roster),
             "duration_seconds": state.get("duration_seconds", 0.0) + (time.time() - start_time)
         }
 
@@ -110,17 +109,33 @@ def extractor(state: MeetingState) -> dict:
 
     result = structured_llm.invoke([HumanMessage(content=prompt)])
 
-    parsed_response = result["parsed"]
-    raw_response = result["raw"]
-    actual_tokens = raw_response.response_metadata.get("token_usage", {}).get("total_tokens", 0)
+    parsed_response = result.get("parsed")
+    raw_response = result.get("raw")
+
+    actual_tokens = 0
+    if raw_response and hasattr(raw_response, "response_metadata"):
+        actual_tokens = raw_response.response_metadata.get("token_usage", {}).get("total_tokens", 0)
+
+    elapsed = time.time() - start_time
+
+    if not parsed_response:
+        print(f"[extractor] LLM failed to parse structured output. Falling back to heuristic.")
+        return {
+            "action_items": _heuristic_items(transcript, roster),
+            "unassigned_observations": [],
+            "tokens_used": state.get("tokens_used", 0) + actual_tokens,
+            "duration_seconds": state.get("duration_seconds", 0.0) + elapsed,
+            "current_retries": state.get("current_retries", 0) + 1
+        }
 
     return {
         "action_items": parsed_response.actions,
         "unassigned_observations": parsed_response.unassigned_observations,
         "tokens_used": state.get("tokens_used", 0) + actual_tokens,
-        "duration_seconds": state.get("duration_seconds", 0.0) + (time.time() - start_time),
+        "duration_seconds": state.get("duration_seconds", 0.0) + elapsed,
         "current_retries": state.get("current_retries", 0) + 1
     }
+
 
 def enricher(state: MeetingState) -> dict:
     """Queries the local RAG layer for historical context."""

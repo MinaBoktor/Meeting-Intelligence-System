@@ -40,7 +40,7 @@ class ActionItem(BaseModel):
 
 class Request(BaseModel):
     transcript: str
-    max_retries: int = 2
+    past_decisions: Optional[str] = None
     roster_names: Optional[list[str]] = Field(default=None, description="A normalized list of valid names extracted from the user's roster.")
 
     @field_validator('roster_names')
@@ -52,7 +52,6 @@ class Request(BaseModel):
         clean_names = []
         for item in v:
             item = item.strip()
-
             if 1 < len(item) < 60 and not item.isnumeric():
                 clean_names.append(item)
 
