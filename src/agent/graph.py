@@ -55,4 +55,6 @@ def initial_state(
         report="",
         injection_findings=[],
         blocked_items=[],
+        tokens_used=0,
+        duration_seconds=0.0
     )

@@ -6,10 +6,10 @@
 
 ## 2. Reliability Metrics
 * **Total Gold Standard Items:** 36
-* **Total Items Extracted:** 35
-* **Owner Assignment Recall:** 94.44%
-* **Extraction Precision:** 97.14%
-* **Average Processing Time:** 3.28 seconds per transcript
+* **Total Items Extracted:** 34
+* **Owner Assignment Recall:** 86.11%
+* **Extraction Precision:** 91.18%
+* **Average Processing Time:** 2.97 seconds per transcript
 
 ## 3. Defense of Reliability
 The system demonstrates high resilience against hallucination and formatting errors. By utilizing a Human-in-the-Loop interrupt and a secondary Critic node, the pipeline successfully parses complex multi-speaker dependencies and correctly resolves relative date anchors to ISO formats.

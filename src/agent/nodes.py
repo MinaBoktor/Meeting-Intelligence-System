@@ -3,6 +3,7 @@ import json
 import os
 import re
 from datetime import datetime
+import time
 from typing import Literal, Optional
 
 from dateutil import parser as dateparser
@@ -375,16 +376,22 @@ def _extract_raw_items(
         f"{transcript}"
         "\n<<<UNTRUSTED_TRANSCRIPT_END>>>"
     )
-    text = _llm.invoke(prompt).content
+    response = _llm.invoke(prompt)
+    text = response.content
+
+    tokens = 0
+    if hasattr(response, "response_metadata"):
+        tokens = response.response_metadata.get("token_usage", {}).get("total_tokens", 0)
+
     match = re.search(r"\[.*\]", text, re.S)
     if not match:
         print("[extractor] model returned no JSON array; treating as no items")
-        return []
+        return [], tokens # Return tuple
     try:
-        return json.loads(match.group(0))
+        return json.loads(match.group(0)), tokens # Return tuple
     except json.JSONDecodeError as exc:
         print(f"[extractor] malformed JSON from model ({exc}); treating as no items")
-        return []
+        return [], tokens # Return tuple
 
 
 def ingestor(state: MeetingState) -> dict:
@@ -413,9 +420,12 @@ def ingestor(state: MeetingState) -> dict:
 
 
 def extractor(state: MeetingState) -> dict:
+    start_time = time.time() # <-- ADDED
     roster = state.get("roster", [])
     meeting_date = state.get("meeting_date")
-    raw_items = _extract_raw_items(
+    
+    # Unpack the tuple to get tokens
+    raw_items, prompt_tokens = _extract_raw_items(
         state["transcript"], roster, meeting_date, state.get("critique", "")
     )
 
@@ -454,8 +464,18 @@ def extractor(state: MeetingState) -> dict:
     if blocked:
         print(f"[extractor] SECURITY blocked {len(blocked)} record(s): "
               f"{[b['reason'] for b in blocked]}")
-    return {"action_items": validated, "last_signature": signature,
-            "stagnant": stagnant, "blocked_items": blocked}
+    elapsed = time.time() - start_time
+    new_duration = state.get("duration_seconds", 0.0) + elapsed
+    new_tokens = state.get("tokens_used", 0) + prompt_tokens
+
+    return {
+        "action_items": validated, 
+        "last_signature": signature,
+        "stagnant": stagnant, 
+        "blocked_items": blocked,
+        "tokens_used": new_tokens,         # <-- ADDED
+        "duration_seconds": new_duration   # <-- ADDED
+    }
 
 
 def critic(state: MeetingState) -> dict:

@@ -6,16 +6,18 @@ MAX_REPAIR_ATTEMPTS: int = 2
 
 
 class MeetingState(TypedDict):
-    transcript: str                  
-    meeting_date: Optional[str]     
-    roster: list[str]             
-    action_items: list[dict]        
-    critique: str                   
-    quality_score: float         
-    retry_count: int                 
-    last_signature: str          
-    stagnant: bool                  
-    approved: bool                  
+    transcript: str
+    meeting_date: Optional[str]
+    roster: list[str]
+    action_items: list[dict]
+    critique: str
+    quality_score: float
+    retry_count: int
+    last_signature: str
+    stagnant: bool
+    approved: bool
     report: str
     injection_findings: list[dict]
     blocked_items: list[dict]
+    tokens_used: int
+    duration_seconds: float
