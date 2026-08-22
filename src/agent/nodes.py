@@ -1,16 +1,13 @@
 import os
 import re
 import time
-import difflib
 from typing import Optional
 from dateutil import parser as dateparser
 
-from pydantic import BaseModel, Field
 from langchain_core.messages import HumanMessage
 from langgraph.types import interrupt
 
-# Assuming your schemas are neatly organized in src.schemas
-from src.schemas import Response, CriticEvaluation, ActionItem
+from src.schemas import Response, CriticEvaluation
 from src.agent.state import MeetingState
 from src.retrieval.retriever import retrieve_context
 
@@ -56,7 +53,6 @@ def _heuristic_items(transcript: str, roster: list[str]) -> list[dict]:
             })
     return items
 
-# --- Core Graph Nodes ---
 
 def ingestor(state: MeetingState) -> dict:
     """Normalizes the transcript and sets up initial tracking metrics."""
@@ -77,13 +73,27 @@ def ingestor(state: MeetingState) -> dict:
     }
 
 
+def enricher(state: MeetingState) -> dict:
+    """Queries the local RAG layer using the transcript to find relevant history."""
+    transcript = state.get("transcript", "")
+
+    if not transcript:
+        return {"retrieved_context": "No transcript available."}
+
+    # Query the vector DB using the transcript text to pull the top 4 most relevant chunks
+    ctx, _ = retrieve_context(transcript, top_k=4)
+
+    return {"retrieved_context": ctx}
+
+
 def extractor(state: MeetingState) -> dict:
-    """Extracts tasks using structured LLM output or offline regex fallback."""
+    """Extracts tasks using structured LLM output augmented by RAG context."""
     start_time = time.time()
     transcript = state.get("transcript", "")
     roster = state.get("roster_names", [])
     meeting_date = state.get("meeting_date")
     feedback = state.get("critic_feedback", [])
+    retrieved_context = state.get("retrieved_context", "") # Add this line!
 
     if not HAS_KEY:
         print("[extractor] No API key. Falling back to heuristic extraction.")
@@ -103,7 +113,11 @@ def extractor(state: MeetingState) -> dict:
     if roster:
         prompt += f"3. Valid owners MUST be exactly one of: {roster}. Use null if unknown.\n"
     if meeting_date:
-        prompt += f"4. The meeting date is {meeting_date}. Resolve relative deadlines (e.g. 'next Friday') against this date.\n"
+        prompt += f"4. The meeting date is {meeting_date}. Resolve relative deadlines (e.g. 'next Friday' or 'August 7') against this date and output them STRICTLY in ISO 8601 format (YYYY-MM-DD).\n"
+
+    if retrieved_context:
+        prompt += f"\nHISTORICAL CONTEXT\n{retrieved_context}\nUse this history to resolve ambiguous tasks or owners.\n"
+
     if feedback:
         prompt += f"\nCRITICAL - Fix this from previous run: {feedback[-1]}\n"
 
@@ -137,17 +151,6 @@ def extractor(state: MeetingState) -> dict:
     }
 
 
-def enricher(state: MeetingState) -> dict:
-    """Queries the local RAG layer for historical context."""
-    actions = state.get("action_items", [])
-    if not actions:
-        return {"retrieved_context": "No action items extracted."}
-
-    query_str = " ".join([a.task if isinstance(a, dict) else getattr(a, 'task', '') for a in actions])
-    ctx, _ = retrieve_context(query_str, top_k=3)
-
-    return {"retrieved_context": ctx}
-
 def critic(state: MeetingState) -> dict:
     """Evaluates the extraction quality, bridging math constraints and LLM analysis."""
     actions = state.get("action_items", [])
@@ -178,7 +181,9 @@ def critic(state: MeetingState) -> dict:
     prompt += (
         f"Assign a quality_score from 0.0 to 10.0. "
         f"Deduct points heavily if tasks lack owners/dates, or contradict the history. "
-        f"If below {PASSING_THRESHOLD}, write specific instructions for the extractor to fix it."
+        f"If below {PASSING_THRESHOLD}, write specific instructions for the extractor to fix it.\n\n"
+        f"CRITICAL INSTRUCTION: You MUST respond by calling the provided tool to output structured JSON. "
+        f"Do NOT output any raw text, markdown, or conversational filler."
     )
 
     eval_result = critic_llm.invoke([HumanMessage(content=prompt)])

@@ -1,6 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel, Field, field_validator, ValidationInfo
-from typing import Literal, Optional
+from typing import Literal, Optional, List
+from dateutil import parser as dateparser
 
 
 
@@ -8,11 +9,23 @@ level = Literal["low", "medium", "high"]
 
 class ActionItem(BaseModel):
     task: str
-    owner: str = Field(description="The person responsible for the task.")
-    due_iso: Optional[str] = Field(description="ISO 8601 date string. Use null if vague.")
-    priority: level = Field(description="High means explicit urgency; otherwise Medium/Low.")
-    dependencies: list[str]
+    owner: Optional[str] = Field(default=None, description="The assigned owner, or null if unassigned")
+    due_iso: Optional[str] = Field(default=None, description="The ISO due date, or null if unspecified")
+    priority: str
+    dependencies: List[str] = Field(default_factory=list)
     confidence: float
+
+    @field_validator("due_iso", mode="before")
+    @classmethod
+    def enforce_iso_date(cls, value):
+        if not value or value.lower() in ["null", "none", "n/a"]:
+            return None
+
+        try:
+            parsed_date = dateparser.parse(str(value)).date()
+            return parsed_date.isoformat()
+        except (ValueError, TypeError, OverflowError):
+            return None
 
     @field_validator('owner')
     @classmethod
