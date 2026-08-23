@@ -1,5 +1,6 @@
 import json
 import time
+import os
 import requests
 from pathlib import Path
 
@@ -11,7 +12,14 @@ EVAL_DIR = DATA_DIR / "eval"
 KB_DIR = DATA_DIR / "knowledge_base"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = "https://meeting-intelligence-system-njf7.onrender.com"
+
+# --- Authentication Setup ---
+AUTH_KEY = os.environ.get("AUTH_KEY", "your-secure-master-api-key-here")
+HEADERS = {
+    "X-API-Key": AUTH_KEY,
+    "Content-Type": "application/json"
+}
 
 
 def load_local_context():
@@ -78,8 +86,8 @@ def run_evaluation():
             "past_decisions": past_decisions
         }
 
-
-        response = requests.post(f"{BASE_URL}/extract", json=payload)
+        # Attached secure HEADERS with the API key
+        response = requests.post(f"{BASE_URL}/extract", json=payload, headers=HEADERS)
 
         if response.status_code != 200:
             print(f"\n[HTTP {response.status_code} ERROR on {eval_id}]")
@@ -97,7 +105,8 @@ def run_evaluation():
         # To avoid 429 error
         time.sleep(20)
 
-        app_res = requests.post(f"{BASE_URL}/approve", json={"thread_id": thread_id, "approved": True}).json()
+        # Attached secure HEADERS to the approval request as well
+        app_res = requests.post(f"{BASE_URL}/approve", json={"thread_id": thread_id, "approved": True}, headers=HEADERS).json()
 
         extracted = app_res.get("actions", [])
         gold_actions = eval_data.get("gold_action_items", [])

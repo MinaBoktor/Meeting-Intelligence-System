@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import requests
 import json
+import os
 
 st.set_page_config(
     page_title="Meeting Intelligence System",
@@ -10,8 +11,24 @@ st.set_page_config(
 )
 
 # Your FastAPI endpoints
-EXTRACT_URL = "http://localhost:8000/extract"
-APPROVE_URL = "http://localhost:8000/approve"
+EXTRACT_URL = "https://meeting-intelligence-system-njf7.onrender.com/extract"
+APPROVE_URL = "https://meeting-intelligence-system-njf7.onrender.com/approve"
+
+# --- Secure Authentication Setup ---
+AUTH_KEY = ""
+
+
+if not AUTH_KEY:
+    AUTH_KEY = os.environ.get("AUTH_KEY", "")
+
+if not AUTH_KEY:
+    st.warning("⚠️ Warning: AUTH_KEY is not detected. Requests to the backend may return 403 Forbidden.")
+
+# Define secure headers for all API requests
+headers = {
+    "X-API-Key": AUTH_KEY,
+    "Content-Type": "application/json"
+}
 
 st.title(" Meeting Intelligence System")
 st.caption("Autonomous extraction, contextual retrieval, roster validation, and HITL review.")
@@ -37,7 +54,6 @@ def parse_roster(roster_text):
     """Converts uploaded roster text into a clean list of names for the API."""
     if not roster_text:
         return []
-    # Handle both comma-separated and newline-separated rosters
     raw_names = roster_text.replace(",", "\n").split("\n")
     return [name.strip() for name in raw_names if name.strip()]
 
@@ -69,7 +85,6 @@ if run_extraction:
         st.session_state.final_response = None
         st.session_state.is_assigned = False
 
-        # Restored the full payload mapping
         payload = {
             "transcript": read_files(transcripts),
             "history": read_files(history_files),
@@ -86,12 +101,11 @@ if run_extraction:
             st.write("⏳ **Extractor Node:** Calling LLM for structured output...")
 
             try:
-                # This was the missing API call!
-                response = requests.post(EXTRACT_URL, json=payload, timeout=120)
+                # Included secure headers with the AUTH_KEY token
+                response = requests.post(EXTRACT_URL, json=payload, headers=headers, timeout=120)
                 if response.status_code == 200:
                     data = response.json()
                     
-                    # Store the thread_id so we can resume the graph later
                     st.session_state.thread_id = data.get("thread_id")
                     st.session_state.pending_action_items = data.get("action_items", [])
                     
@@ -116,7 +130,6 @@ if st.session_state.thread_id and not st.session_state.is_assigned:
     df = pd.DataFrame(raw_items)
 
     if not df.empty:
-        # Check for unresolved fields (which the backend sets to None/null)
         unresolved_mask = df["owner"].isna() | df["due_iso"].isna()
         if unresolved_mask.any():
             st.warning(f"{unresolved_mask.sum()} item(s) have unresolved fields. Review them carefully.")
@@ -137,13 +150,13 @@ if st.session_state.thread_id and not st.session_state.is_assigned:
         col_btn1, col_btn2 = st.columns([1, 4])
         with col_btn1:
             if st.button(" Approve & Assign Items", type="primary", use_container_width=True):
-                # Send the approval decision back to resume the graph
                 approval_payload = {
                     "thread_id": st.session_state.thread_id,
                     "approved": True
                 }
                 try:
-                    res = requests.post(APPROVE_URL, json=approval_payload, timeout=120)
+                    # Included secure headers for the approval step as well
+                    res = requests.post(APPROVE_URL, json=approval_payload, headers=headers, timeout=120)
                     if res.status_code == 200:
                         st.session_state.final_response = res.json()
                         st.session_state.is_assigned = True
@@ -163,7 +176,6 @@ if st.session_state.is_assigned and st.session_state.final_response:
     st.success("Status: **Approved & Graph Completed**")
     st.divider()
     
-    # Security Alerts Panel
     findings = data.get("injection_findings", [])
     blocked = data.get("blocked_items", [])
     
@@ -178,7 +190,6 @@ if st.session_state.is_assigned and st.session_state.final_response:
             with st.expander("View Blocked Payloads"):
                 st.json(blocked)
 
-    # Observability Panel
     st.subheader("📊 Observability Metrics")
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Quality Score", f"{data.get('quality_score', 0.0):.2f}")
