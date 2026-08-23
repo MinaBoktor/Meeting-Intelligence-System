@@ -1,0 +1,12 @@
+{
+  "method": "tiktoken (cl100k_base)",
+  "n_items": 36,
+  "json_tokens": 1929,
+  "toon_tokens": 1061,
+  "json_chars": 7051,
+  "toon_chars": 4000,
+  "saving_pct_total": 45.0,
+  "avg_json_tokens_per_meeting": 193.8,
+  "avg_toon_tokens_per_meeting": 120.5,
+  "avg_saving_pct_per_meeting": 37.8
+}

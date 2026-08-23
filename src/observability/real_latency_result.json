@@ -1,0 +1,66 @@
+{
+  "per_file": [
+    {
+      "file": "data/eval\\eval_001.txt",
+      "chars": 660,
+      "ingestor_ms": 0.135,
+      "heuristic_extractor_ms": 0.307
+    },
+    {
+      "file": "data/eval\\eval_002.txt",
+      "chars": 724,
+      "ingestor_ms": 0.079,
+      "heuristic_extractor_ms": 0.239
+    },
+    {
+      "file": "data/eval\\eval_003.txt",
+      "chars": 652,
+      "ingestor_ms": 0.065,
+      "heuristic_extractor_ms": 0.202
+    },
+    {
+      "file": "data/eval\\eval_004.txt",
+      "chars": 613,
+      "ingestor_ms": 0.059,
+      "heuristic_extractor_ms": 0.183
+    },
+    {
+      "file": "data/eval\\eval_005.txt",
+      "chars": 775,
+      "ingestor_ms": 0.07,
+      "heuristic_extractor_ms": 0.211
+    },
+    {
+      "file": "data/eval\\eval_006.txt",
+      "chars": 626,
+      "ingestor_ms": 0.059,
+      "heuristic_extractor_ms": 0.175
+    },
+    {
+      "file": "data/eval\\eval_007.txt",
+      "chars": 501,
+      "ingestor_ms": 0.052,
+      "heuristic_extractor_ms": 0.158
+    },
+    {
+      "file": "data/eval\\eval_008.txt",
+      "chars": 764,
+      "ingestor_ms": 0.066,
+      "heuristic_extractor_ms": 0.214
+    },
+    {
+      "file": "data/eval\\eval_009.txt",
+      "chars": 868,
+      "ingestor_ms": 0.078,
+      "heuristic_extractor_ms": 0.234
+    },
+    {
+      "file": "data/eval\\eval_010.txt",
+      "chars": 684,
+      "ingestor_ms": 0.061,
+      "heuristic_extractor_ms": 0.191
+    }
+  ],
+  "avg_ingestor_ms": 0.072,
+  "avg_heuristic_extractor_ms": 0.211
+}
