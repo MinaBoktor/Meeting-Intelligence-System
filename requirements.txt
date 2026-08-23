@@ -1,0 +1,15 @@
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+python-multipart
+streamlit>=1.30.0
+pandas>=2.0.0
+requests>=2.31.0
+tabulate
+langchain>=0.1.0
+langchain-core
+langchain-groq
+langgraph
+llama-index
+llama-index-core
+pydantic>=2.0.0
+python-dateutil

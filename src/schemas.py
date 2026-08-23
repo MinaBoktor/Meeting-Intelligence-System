@@ -1,6 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, Field, field_validator, ValidationInfo
-from typing import Literal, Optional, List
+from typing import Literal, Optional, List, Dict, Any, Optional
 from dateutil import parser as dateparser
 
 
@@ -53,8 +53,10 @@ class ActionItem(BaseModel):
 
 class Request(BaseModel):
     transcript: str
+    roster_names: List[str] = Field(default_factory=list)
+    history: Optional[str] = None
+    context: Optional[str] = None
     past_decisions: Optional[str] = None
-    roster_names: Optional[list[str]] = Field(default=None, description="A normalized list of valid names extracted from the user's roster.")
 
     @field_validator('roster_names')
     @classmethod
@@ -79,6 +81,9 @@ class Response(BaseModel):
     retry_count: int
     tokens_used: int
     duration_seconds: float
+    report: str = ""
+    injection_findings: List[Dict[str, Any]] = []
+    blocked_items: List[Dict[str, Any]] = []
 
 
 class CriticEvaluation(BaseModel):
