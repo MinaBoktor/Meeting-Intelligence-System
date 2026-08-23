@@ -13,6 +13,7 @@ kb_path = current_dir.parent / "agent"
 db_path = kb_path / "chroma_db"
 
 Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
+Settings.llm = None
 
 # Persistent Storage
 chroma_client = chromadb.PersistentClient(path=str(db_path))

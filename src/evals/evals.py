@@ -17,7 +17,7 @@ BASE_URL = "https://meeting-intelligence-system-njf7.onrender.com"
 # --- Authentication Setup ---
 AUTH_KEY = os.environ.get("AUTH_KEY", "your-secure-master-api-key-here")
 HEADERS = {
-    "X-API-Key": AUTH_KEY,
+    "AUTH": AUTH_KEY,
     "Content-Type": "application/json"
 }
 
@@ -86,8 +86,14 @@ def run_evaluation():
             "past_decisions": past_decisions
         }
 
-        # Attached secure HEADERS with the API key
-        response = requests.post(f"{BASE_URL}/extract", json=payload, headers=HEADERS)
+        response = requests.post(
+            f"{BASE_URL}/extract",
+            json=payload,
+            headers=HEADERS
+        )
+
+        # Always wait before sending another /extract request
+        time.sleep(20)
 
         if response.status_code != 200:
             print(f"\n[HTTP {response.status_code} ERROR on {eval_id}]")
@@ -99,7 +105,9 @@ def run_evaluation():
         thread_id = ext_res.get("thread_id")
 
         if not thread_id:
-            print(f"Failed to pause graph for {eval_id}. Skipping.")
+            print(f"Failed to pause graph for {eval_id}.")
+            print(f"Server response: {ext_res}")
+            print("-" * 50)
             continue
 
         # To avoid 429 error

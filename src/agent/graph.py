@@ -1,7 +1,7 @@
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 
-from .nodes import critic, extractor, hitl_approval, ingestor, reporter
+from .nodes import critic, extractor, hitl_approval, ingestor, enricher, reporter
 from .router import decision, route, route_after_approval
 from .state import MeetingState
 
@@ -9,7 +9,9 @@ from .state import MeetingState
 def build_graph():
     builder = StateGraph(MeetingState)
 
+    # 1. Register ALL nodes
     builder.add_node("ingestor", ingestor)
+    builder.add_node("enricher", enricher)
     builder.add_node("extractor", extractor)
     builder.add_node("critic", critic)
     builder.add_node("decision", decision)
@@ -17,9 +19,11 @@ def build_graph():
     builder.add_node("reporter", reporter)
 
     builder.add_edge(START, "ingestor")
-    builder.add_edge("ingestor", "extractor")
+    builder.add_edge("ingestor", "enricher")
+    builder.add_edge("enricher", "extractor")
     builder.add_edge("extractor", "critic")
     builder.add_edge("critic", "decision")
+
     builder.add_conditional_edges(
         "decision",
         route,
@@ -30,7 +34,9 @@ def build_graph():
         route_after_approval,
         {"assign": "reporter", "revise": "extractor"},
     )
+
     builder.add_edge("reporter", END)
+
     return builder.compile(checkpointer=MemorySaver())
 
 

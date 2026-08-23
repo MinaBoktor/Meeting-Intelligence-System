@@ -9,6 +9,7 @@ from typing import Literal, Optional
 from dateutil import parser as dateparser
 from langgraph.types import interrupt
 from pydantic import BaseModel, Field, ValidationError, field_validator
+from src.retrieval.retriever import retrieve_context
 
 from . import security
 from .state import MAX_REPAIR_ATTEMPTS, QUALITY_THRESHOLD, MeetingState
@@ -423,7 +424,7 @@ def extractor(state: MeetingState) -> dict:
     start_time = time.time() # <-- ADDED
     roster = state.get("roster", [])
     meeting_date = state.get("meeting_date")
-    
+
     # Unpack the tuple to get tokens
     raw_items, prompt_tokens = _extract_raw_items(
         state["transcript"], roster, meeting_date, state.get("critique", "")
@@ -476,6 +477,30 @@ def extractor(state: MeetingState) -> dict:
         "tokens_used": new_tokens,         # <-- ADDED
         "duration_seconds": new_duration   # <-- ADDED
     }
+
+
+def enricher(state: dict) -> dict:
+    """
+    Enricher Node: Fetches semantic context from the LlamaIndex knowledge base 
+    and injects it into the agent state.
+    """
+    print("ENRICHER: Retrieving Context")
+
+    transcript = state.get("transcript", "")
+
+    try:
+        ctx, srcs = retrieve_context(transcript)
+
+        if not srcs:
+            retrieved_docs = ctx
+        else:
+            retrieved_docs = f"Context (Sources: {', '.join(srcs)}):\n{ctx}"
+
+    except Exception as e:
+        print(f"Retrieval failed: {e}")
+        retrieved_docs = "No historical context found."
+
+    return {"past_decisions": retrieved_docs}
 
 
 def critic(state: MeetingState) -> dict:
