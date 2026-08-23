@@ -1,0 +1,418 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "hour": 2
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/u/4/folders/1l0d7V5EPyzGECc57P41dowFrD_Y7zRAd",
+          "mode": "url"
+        },
+        "event": "fileCreated",
+        "options": {
+          "fileType": "all"
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1808,
+        -16
+      ],
+      "id": "e140f06b-f99e-4209-b852-ca5cb6ced886",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "X1dyB7B8xeVkJFR1",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://meeting-intelligence-system-njf7.onrender.com/extract",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "XXXX",
+              "value": "XXXXXXXXXXXXXXXXXXXXXXXXX"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "transcript",
+              "value": "test transcript"
+            },
+            {
+              "name": "roster_names",
+              "value": "[]"
+            },
+            {
+              "name": "history"
+            },
+            {
+              "name": "context"
+            },
+            {
+              "name": "past_decisions"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -1184,
+        -32
+      ],
+      "id": "e13aca6f-e768-4e52-bbbb-76e2b7010b01",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -624,
+        256
+      ],
+      "id": "b600cd29-8785-4e4f-9ac5-c3e4e610e3c8",
+      "name": "Send an Email",
+      "webhookId": "d4361281-6fd8-4e8c-b9b6-73f17b2f9059"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{$json.id}}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1584,
+        288
+      ],
+      "id": "02909ff7-4807-4988-b652-e24320a21cab",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "X1dyB7B8xeVkJFR1",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "2p3tjKJZPzsXtc86",
+          "mode": "list",
+          "cachedResultName": "Docs",
+          "cachedResultUrl": "/projects/V4zF2CfFvUSG68rT/datatables/2p3tjKJZPzsXtc86"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Text": "={{$json.name}}"
+          },
+          "matchingColumns": [
+            "Text"
+          ],
+          "schema": [
+            {
+              "id": "Text",
+              "displayName": "Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -1344,
+        480
+      ],
+      "id": "1fc5f578-9060-46b0-9a73-01e6a46fa651",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "operation": "rowNotExists",
+        "dataTableId": {
+          "__rl": true,
+          "value": "2p3tjKJZPzsXtc86",
+          "mode": "list",
+          "cachedResultName": "Docs",
+          "cachedResultUrl": "/projects/V4zF2CfFvUSG68rT/datatables/2p3tjKJZPzsXtc86"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "Text",
+              "keyValue": "={{$json.name}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -1792,
+        288
+      ],
+      "id": "a328af3c-5f9a-44fb-9149-c5c8b79c7f2f",
+      "name": "If row does not exist"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1l0d7V5EPyzGECc57P41dowFrD_Y7zRAd",
+            "mode": "list",
+            "cachedResultName": "GP_KAYFA",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1l0d7V5EPyzGECc57P41dowFrD_Y7zRAd"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1600,
+        -16
+      ],
+      "id": "2d7183f6-d43b-4e3f-9040-0b9afea506fa",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "X1dyB7B8xeVkJFR1",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\n\nconst transcript = Buffer.from(\n  item.binary.data.data,\n  'base64'\n).toString('utf8');\n\nreturn [{\n  json: {\n    transcript,\n    roster_names: []\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1344,
+        288
+      ],
+      "id": "5ea5449b-4c0b-44aa-949b-674043aa1889",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://meeting-intelligence-system-njf7.onrender.com/approve",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "XXXX",
+              "value": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "transcript",
+              "value": "test transcript"
+            },
+            {
+              "name": "roster_names",
+              "value": "[]"
+            },
+            {
+              "name": "history"
+            },
+            {
+              "name": "context"
+            },
+            {
+              "name": "past_decisions"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -992,
+        -32
+      ],
+      "id": "f763b247-9d6b-4322-9fef-be36502ae0a5",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        -784,
+        128
+      ],
+      "id": "948f33c2-6a9e-4eb4-be53-b69dce048fb8",
+      "name": "Markdown"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        []
+      ]
+    },
+    "If row does not exist": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "If row does not exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a85f3c4e-bad2-4ec4-835a-4593ea9b4f43",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a14af760fa974ef507c8597842f7ded6aac409e14c5783ba0f1c661cbacaf10"
+  },
+  "nodeGroups": [],
+  "id": "Eqm7SQuN4fQKw8SZ",
+  "tags": []
+}
