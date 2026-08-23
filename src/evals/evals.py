@@ -12,9 +12,9 @@ EVAL_DIR = DATA_DIR / "eval"
 KB_DIR = DATA_DIR / "knowledge_base"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 
-BASE_URL = "https://meeting-intelligence-system-njf7.onrender.com"
+BASE_URL = "http://127.0.0.1:8000"
 
-# --- Authentication Setup ---
+# Authentication Setup
 AUTH_KEY = os.environ.get("AUTH_KEY", "your-secure-master-api-key-here")
 HEADERS = {
     "AUTH": AUTH_KEY,

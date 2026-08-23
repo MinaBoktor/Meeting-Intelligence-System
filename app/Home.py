@@ -11,8 +11,8 @@ st.set_page_config(
 )
 
 # Your FastAPI endpoints
-EXTRACT_URL = "https://meeting-intelligence-system-njf7.onrender.com/extract"
-APPROVE_URL = "https://meeting-intelligence-system-njf7.onrender.com/approve"
+EXTRACT_URL = "http://127.0.0.1:8000/extract"
+APPROVE_URL = "http://127.0.0.1:8000/approve"
 
 # --- Secure Authentication Setup ---
 AUTH_KEY = ""
@@ -26,7 +26,7 @@ if not AUTH_KEY:
 
 # Define secure headers for all API requests
 headers = {
-    "X-API-Key": AUTH_KEY,
+    "AUTH": AUTH_KEY,
     "Content-Type": "application/json"
 }
 
