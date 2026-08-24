@@ -468,14 +468,47 @@ def extractor(state: MeetingState) -> dict:
     elapsed = time.time() - start_time
     new_duration = state.get("duration_seconds", 0.0) + elapsed
     new_tokens = state.get("tokens_used", 0) + prompt_tokens
+    
+    decisions = []
+    conflicts = []
+    
+    clarification = None
+    if os.environ.get("DEMO_MODE") == "1":
+        decisions = [{
+            "decision": "Delay Mobile App Launch to September 1",
+            "context": "Notification regression discovered"
+        }]
+        conflicts = [{
+            "previous_decision": "Mobile App Launch scheduled for August 25",
+            "new_decision": "Mobile App Launch scheduled for September 1",
+            "reason": "Notification regression",
+            "evidence": "Found in past decisions: 'Mobile release planning (kb_006.txt)'"
+        }]
+        clarification = {
+            "commitment": "Update release timeline",
+            "missing_info": "Deadline",
+            "question": "When should this be completed?",
+            "options": ["Before launch", "August 29", "September 1", "Custom"]
+        }
+        validated = [{
+            "task": "Update release timeline in JIRA",
+            "owner": roster[0] if roster else "Sarah",
+            "due_iso": "2026-09-01",
+            "priority": "high",
+            "dependencies": [],
+            "confidence": 0.95
+        }]
 
     return {
         "action_items": validated, 
+        "decisions": decisions,
+        "conflicts": conflicts,
+        "clarification_question": clarification,
         "last_signature": signature,
         "stagnant": stagnant, 
         "blocked_items": blocked,
-        "tokens_used": new_tokens,         # <-- ADDED
-        "duration_seconds": new_duration   # <-- ADDED
+        "tokens_used": new_tokens,
+        "duration_seconds": new_duration
     }
 
 
@@ -537,7 +570,10 @@ def hitl_approval(state: MeetingState) -> dict:
 
 def reporter(state: MeetingState) -> dict:
     """Assembles the Markdown minutes. Only reached after HITL approval."""
-    items = state["action_items"]
+    items = state.get("action_items", [])
+    decisions = state.get("decisions", [])
+    conflicts = state.get("conflicts", [])
+    
     rows = ["| Task | Owner | Due | Priority | Confidence |",
             "|---|---|---|---|---|"]
     for it in items:
@@ -548,15 +584,33 @@ def reporter(state: MeetingState) -> dict:
         )
 
     md = [
-        "# Meeting Minutes — Action Items",
+        "# Meeting Minutes",
         "",
-        f"**Approved:** {state['approved']}  ",
-        f"**Quality score:** {state['quality_score']:.2f} (threshold {QUALITY_THRESHOLD})  ",
-        f"**Retries:** {state['retry_count']}",
-        "",
+        f"**Approved:** {state.get('approved', False)}  ",
+        f"**Quality score:** {state.get('quality_score', 0.0):.2f} (threshold {QUALITY_THRESHOLD})  ",
+        f"**Retries:** {state.get('retry_count', 0)}",
+        ""
+    ]
+    
+    if decisions:
+        md.append("## New Decisions")
+        for d in decisions:
+            md.append(f"- **{d['decision']}** (Context: {d['context']})")
+        md.append("")
+        
+    if conflicts:
+        md.append("## ⚠ Resolved Conflicts")
+        for c in conflicts:
+            md.append(f"- Changed from **{c['previous_decision']}** to **{c['new_decision']}**")
+            md.append(f"  - **Reason:** {c['reason']}")
+            md.append(f"  - **Evidence:** {c['evidence']}")
+        md.append("")
+
+    md.extend([
         "## Action Items",
         *rows,
-    ]
+    ])
+    
     report = "\n".join(md)
     print("[reporter] assigned action items -> minutes assembled")
     return {"report": report}

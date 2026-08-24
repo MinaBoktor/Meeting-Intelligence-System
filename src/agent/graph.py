@@ -44,14 +44,19 @@ def initial_state(
     transcript: str,
     roster: list[str] | None = None,
     meeting_date: str | None = None,
+    meeting_id: str | None = None,
 ) -> MeetingState:
     """Builds the starting state. `meeting_date` is optional — the ingestor
     reads it from the transcript's `Date:` header when it isn't supplied."""
     return MeetingState(
         transcript=transcript,
         meeting_date=meeting_date,
+        meeting_id=meeting_id,
         roster=roster or [],
         action_items=[],
+        decisions=[],
+        conflicts=[],
+        clarification_question=None,
         critique="",
         quality_score=0.0,
         retry_count=0,

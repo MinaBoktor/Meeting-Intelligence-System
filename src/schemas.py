@@ -76,6 +76,8 @@ class Request(BaseModel):
 
 class Response(BaseModel):
     actions: list[ActionItem]
+    decisions: List[Dict[str, Any]] = Field(default_factory=list, description="Extracted decisions.")
+    conflicts: List[Dict[str, Any]] = Field(default_factory=list, description="Detected conflicts with past decisions.")
     unassigned_observations: list[str] = Field(default=[], description="List any tasks or decisions that lack a clear, valid owner from the roster.")
     quality_score: float
     retry_count: int

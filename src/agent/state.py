@@ -8,8 +8,12 @@ MAX_REPAIR_ATTEMPTS: int = 2
 class MeetingState(TypedDict):
     transcript: str
     meeting_date: Optional[str]
+    meeting_id: Optional[str]
     roster: list[str]
     action_items: list[dict]
+    decisions: list[dict]
+    conflicts: list[dict]
+    clarification_question: Optional[dict]
     critique: str
     quality_score: float
     retry_count: int

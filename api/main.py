@@ -6,7 +6,11 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
-from api.routes import router
+from api.routes import router, public_router
+from src.db import init_db
+
+# Initialize database
+init_db()
 
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
@@ -22,7 +26,5 @@ async def verify_api_key(api_key: str = Security(api_key_header)):
         return api_key
     raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Invalid or missing API Key")
 
-app.include_router(
-    router,
-    dependencies=[Security(verify_api_key)],
-)
+app.include_router(router)
+app.include_router(public_router)

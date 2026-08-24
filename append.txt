@@ -1,0 +1,53 @@
+class ChatRequest(BaseModel):
+    conversation_id: str = None
+    message: str
+
+@public_router.post('/memory/chat')
+async def memory_chat(req: ChatRequest):
+    from src.db import get_db
+    import uuid
+    conn = get_db()
+    c = conn.cursor()
+    
+    conv_id = req.conversation_id
+    if not conv_id:
+        conv_id = str(uuid.uuid4())
+        
+    c.execute('CREATE TABLE IF NOT EXISTS chat_history (id INTEGER PRIMARY KEY AUTOINCREMENT, conversation_id TEXT, role TEXT, content TEXT)')
+    
+    c.execute('INSERT INTO chat_history (conversation_id, role, content) VALUES (?, ?, ?)', (conv_id, 'user', req.message))
+    
+    from src.retrieval.retriever import retrieve_context
+    context_str, sources = retrieve_context(req.message, top_k=5)
+    
+    c.execute('SELECT role, content FROM chat_history WHERE conversation_id = ? ORDER BY id ASC', (conv_id,))
+    history = c.fetchall()
+    
+    from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+    from src.agent.llm import get_llm
+    
+    llm = get_llm()
+    sys_msg = "You are the Organizational Memory Assistant. You answer questions about organizational decisions, meetings, and commitments based ONLY on the provided context and conversation history. Always cite your sources explicitly. If the context does not contain the answer, say 'I couldn\'t find evidence in the organization\'s recorded meetings that answers that question.' Do not hallucinate.\n\nContext:\n" + context_str
+    messages = [
+        SystemMessage(content=sys_msg)
+    ]
+    
+    for row in history:
+        role, content = row['role'], row['content']
+        if role == 'user':
+            messages.append(HumanMessage(content=content))
+        elif role == 'ai':
+            messages.append(AIMessage(content=content))
+            
+    response = llm.invoke(messages)
+    answer = response.content
+    
+    c.execute('INSERT INTO chat_history (conversation_id, role, content) VALUES (?, ?, ?)', (conv_id, 'ai', answer))
+    conn.commit()
+    conn.close()
+    
+    return {
+        'conversation_id': conv_id,
+        'answer': answer,
+        'sources': [{'title': s, 'type': 'meeting'} for s in sources]
+    }

@@ -38,6 +38,10 @@ if "thread_id" not in st.session_state:
     st.session_state.thread_id = None
 if "pending_action_items" not in st.session_state:
     st.session_state.pending_action_items = []
+if "pending_decisions" not in st.session_state:
+    st.session_state.pending_decisions = []
+if "pending_conflicts" not in st.session_state:
+    st.session_state.pending_conflicts = []
 if "final_response" not in st.session_state:
     st.session_state.final_response = None
 if "is_assigned" not in st.session_state:
@@ -108,6 +112,8 @@ if run_extraction:
                     
                     st.session_state.thread_id = data.get("thread_id")
                     st.session_state.pending_action_items = data.get("action_items", [])
+                    st.session_state.pending_decisions = data.get("decisions", [])
+                    st.session_state.pending_conflicts = data.get("conflicts", [])
                     
                     st.write("**Critic Node:** Validating extracted items against Roster and checking dates...")
                     st.write("**Decision Node:** Graph paused. Waiting for HITL (Human-in-the-Loop) Approval.")
@@ -124,6 +130,26 @@ if run_extraction:
 if st.session_state.thread_id and not st.session_state.is_assigned:
     st.divider()
     st.header("2. Human-in-the-Loop (HITL) Validation")
+    
+    # Decisions and Conflicts Display
+    if st.session_state.pending_decisions or st.session_state.pending_conflicts:
+        st.subheader("Decision Intelligence")
+        
+        for d in st.session_state.pending_decisions:
+            st.info(f"**New Decision Detected:** {d.get('decision')}\n\n*Context:* {d.get('context')}")
+            
+        for c in st.session_state.pending_conflicts:
+            st.error(f"**⚠ Decision Change Detected**")
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown(f"**Previous Decision:**\n> {c.get('previous_decision')}")
+            with col2:
+                st.markdown(f"**New Decision:**\n> {c.get('new_decision')}")
+            st.markdown(f"**Reason:** {c.get('reason')}")
+            with st.expander("View Historical Evidence"):
+                st.write(c.get('evidence'))
+    
+    st.subheader("Commitments & Action Items")
     st.markdown("> **Rule**: Review the agent's work. Owners not matching the Roster are marked as null.")
 
     raw_items = st.session_state.pending_action_items
@@ -147,9 +173,9 @@ if st.session_state.thread_id and not st.session_state.is_assigned:
             num_rows="dynamic"
         )
 
-        col_btn1, col_btn2 = st.columns([1, 4])
+        col_btn1, col_btn2 = st.columns([2, 3])
         with col_btn1:
-            if st.button(" Approve & Assign Items", type="primary", use_container_width=True):
+            if st.button(" ✓ Approve Decision & Commitments", type="primary", use_container_width=True):
                 approval_payload = {
                     "thread_id": st.session_state.thread_id,
                     "approved": True
@@ -207,7 +233,11 @@ if st.session_state.is_assigned and st.session_state.final_response:
         st.markdown(minutes_md)
 
     with col_export:
-        final_actions = data.get("actions", [])
+        export_data = {
+            "decisions": data.get("decisions", []),
+            "conflicts": data.get("conflicts", []),
+            "actions": data.get("actions", [])
+        }
         
         st.download_button(
             label=" Download Minutes (.md)", 
@@ -217,9 +247,9 @@ if st.session_state.is_assigned and st.session_state.final_response:
             use_container_width=True
         )
         st.download_button(
-            label=" Download Structured Actions (.json)", 
-            data=json.dumps(final_actions, indent=2),
-            file_name="action_items.json", 
+            label=" Download Structured Data (.json)", 
+            data=json.dumps(export_data, indent=2),
+            file_name="meeting_intelligence.json", 
             mime="application/json", 
             use_container_width=True
         )
